@@ -12,22 +12,22 @@ use SilverStripe\ORM\DataObject;
 
 class ExtensibleSearch extends DataObject
 {
-    private static $table_name = 'ExtensibleSearch';
+    private static string $table_name = 'ExtensibleSearch';
 
-    private static $db = [
+    private static array $db = [
         'Term' => 'Varchar(255)',
         'Results' => 'Int',
         'Time' => 'Float',
         'SearchEngine' => 'Varchar(255)'
     ];
 
-    private static $has_one = [
+    private static array $has_one = [
         'ExtensibleSearchPage' => ExtensibleSearchPage::class
     ];
 
-    private static $default_sort = 'ID DESC';
+    private static string $default_sort = 'ID DESC';
 
-    private static $summary_fields = [
+    private static array $summary_fields = [
         'Created.Nice',
         'Term',
         'TimeTakenSummary',
@@ -39,7 +39,7 @@ class ExtensibleSearch extends DataObject
      *	Allow the ability to disable search analytics.
      */
 
-    private static $enable_analytics = true;
+    private static bool $enable_analytics = true;
 
     public function canView($member = null)
     {
@@ -61,11 +61,8 @@ class ExtensibleSearch extends DataObject
 
     /**
      *	Retrieve the search time for display purposes.
-     *
-     *	@return float
      */
-
-    public function getTimeTakenSummary()
+    public function getTimeTakenSummary(): float
     {
 
         return round($this->Time, 5);
@@ -81,7 +78,7 @@ class ExtensibleSearch extends DataObject
     {
 
         $configuration = Config::inst()->get(ExtensibleSearchPage::class, 'custom_search_engines');
-        return isset($configuration[$this->SearchEngine]) ? $configuration[$this->SearchEngine] : $this->SearchEngine;
+        return $configuration[$this->SearchEngine] ?? $this->SearchEngine;
     }
 
 }

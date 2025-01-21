@@ -17,24 +17,24 @@ use SilverStripe\ORM\FieldType\DBHTMLText;
 
 class ExtensibleSearchArchive extends DataObject
 {
-    private static $table_name = 'ExtensibleSearchArchive';
+    private static string $table_name = 'ExtensibleSearchArchive';
 
-    private static $db = [
+    private static array $db = [
         'StartingDate' => 'Date',
         'EndingDate' => 'Date'
     ];
 
-    private static $has_one = [
+    private static array $has_one = [
         'ExtensibleSearchPage' => ExtensibleSearchPage::class
     ];
 
-    private static $has_many = [
+    private static array $has_many = [
         'HistorySummary' => ExtensibleSearchArchived::class
     ];
 
-    private static $default_sort = 'ID DESC';
+    private static string $default_sort = 'ID DESC';
 
-    private static $summary_fields = [
+    private static array $summary_fields = [
         'TitleSummary'
     ];
 

@@ -17,11 +17,11 @@ class ExtensibleSearchAPI extends Controller
 {
     public $service;
 
-    private static $dependencies = [
+    private static array $dependencies = [
         'service' => '%$' . ExtensibleSearchService::class
     ];
 
-    private static $allowed_actions = [
+    private static array $allowed_actions = [
         'toggleSuggestionApproved',
         'getPageSuggestions',
         'getSuggestions'

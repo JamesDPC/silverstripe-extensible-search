@@ -18,32 +18,32 @@ use SilverStripe\View\Requirements;
 
 class ExtensibleSearchSuggestion extends DataObject implements PermissionProvider
 {
-    private static $table_name = 'ExtensibleSearchSuggestion';
+    private static string $table_name = 'ExtensibleSearchSuggestion';
 
     /**
      *	Store the frequency to make search suggestion relevance more efficient.
      */
 
-    private static $db = [
+    private static array $db = [
         'Term' => 'Varchar(255)',
         'Frequency' => 'Int',
         'Approved' => 'Boolean'
     ];
 
-    private static $has_one = [
+    private static array $has_one = [
         'ExtensibleSearchPage' => ExtensibleSearchPage::class
     ];
 
-    private static $default_sort = 'Frequency DESC, Term ASC';
+    private static string $default_sort = 'Frequency DESC, Term ASC';
 
-    private static $summary_fields = [
+    private static array $summary_fields = [
         'Term',
         'FrequencySummary',
         'FrequencyPercentage',
         'ApprovedField'
     ];
 
-    private static $indexes = [
+    private static array $indexes = [
         'Approved' => true,
         'SearchPageID_Approved' => ['type' => 'index', 'columns' => ["ExtensibleSearchPageID","Approved"]],
     ];
@@ -52,13 +52,13 @@ class ExtensibleSearchSuggestion extends DataObject implements PermissionProvide
      *	Allow the ability to disable search suggestions.
      */
 
-    private static $enable_suggestions = true;
+    private static bool $enable_suggestions = true;
 
     /**
      *	Allow the ability to automatically approve user search generated suggestions.
      */
 
-    private static $automatic_approval = false;
+    private static bool $automatic_approval = false;
 
     /**
      *	Create a unique permission for management of search suggestions.
@@ -124,6 +124,7 @@ class ExtensibleSearchSuggestion extends DataObject implements PermissionProvide
         if ($this->Term) {
             $fields->makeFieldReadonly('Term');
         }
+
         $fields->removeByName('Frequency');
 
         // Allow extension customisation.
@@ -179,16 +180,13 @@ class ExtensibleSearchSuggestion extends DataObject implements PermissionProvide
     public function getFrequencySummary()
     {
 
-        return $this->Frequency ? $this->Frequency : '-';
+        return $this->Frequency ?: '-';
     }
 
     /**
      *	Retrieve the frequency percentage.
-     *
-     *	@return string
      */
-
-    public function getFrequencyPercentage()
+    public function getFrequencyPercentage(): string
     {
 
         $history = ExtensibleSearch::get()->filter('ExtensibleSearchPageID', $this->ExtensibleSearchPageID);
@@ -216,6 +214,7 @@ class ExtensibleSearchSuggestion extends DataObject implements PermissionProvide
         if (!Permission::checkMember($user, 'EXTENSIBLE_SEARCH_SUGGESTIONS')) {
             $approved->setAttribute('disabled', 'true');
         }
+
         return $approved;
     }
 

@@ -21,11 +21,11 @@ class ExtensibleSearchPageController extends \PageController
 {
     public $service;
 
-    private static $dependencies = [
+    private static array $dependencies = [
         'service' => '%$' . ExtensibleSearchService::class
     ];
 
-    private static $allowed_actions = [
+    private static array $allowed_actions = [
         'getForm',
         'getSearchForm',
         'getSearchResults'
@@ -42,7 +42,7 @@ class ExtensibleSearchPageController extends \PageController
 
         $engine = $this->data()->SearchEngine;
         $classes = Config::inst()->get(FulltextSearchable::class, 'searchable_classes');
-        if (!$engine || (($engine !== 'Full-Text') && !ClassInfo::exists($engine)) || (($engine === 'Full-Text') && (!is_array($classes) || (count($classes) === 0)))) {
+        if (!$engine || (($engine !== 'Full-Text') && !ClassInfo::exists($engine)) || (($engine === 'Full-Text') && (!is_array($classes) || ($classes === [])))) {
 
             // The search engine has not been selected.
 
@@ -105,7 +105,7 @@ class ExtensibleSearchPageController extends \PageController
         $engine = $this->data()->SearchEngine;
         $configuration = Config::inst();
         $classes = $configuration->get(FulltextSearchable::class, 'searchable_classes');
-        if (!$engine || (($engine !== 'Full-Text') && !ClassInfo::exists($engine)) || (($engine === 'Full-Text') && (!is_array($classes) || (count($classes) === 0)))) {
+        if (!$engine || (($engine !== 'Full-Text') && !ClassInfo::exists($engine)) || (($engine === 'Full-Text') && (!is_array($classes) || ($classes === [])))) {
 
             // The search engine has not been selected.
 
@@ -144,7 +144,7 @@ class ExtensibleSearchPageController extends \PageController
                 'SortBy',
                 _t('EXTENSIBLE_SEARCH.SORT_BY', 'Sort By'),
                 $this->data()->getSelectableFields(),
-                $request->getVar('SortBy') ? $request->getVar('SortBy') : $this->data()->SortBy
+                $request->getVar('SortBy') ?: $this->data()->SortBy
             )->setHasEmptyDefault(true));
             $fields->push(DropdownField::create(
                 'SortDirection',
@@ -153,7 +153,7 @@ class ExtensibleSearchPageController extends \PageController
                     'DESC' => _t('EXTENSIBLE_SEARCH.DESCENDING', 'Descending'),
                     'ASC' => _t('EXTENSIBLE_SEARCH.ASCENDING', 'Ascending')
                 ],
-                $request->getVar('SortDirection') ? $request->getVar('SortDirection') : $this->data()->SortDirection
+                $request->getVar('SortDirection') ?: $this->data()->SortDirection
             )->setHasEmptyDefault(true));
         }
 
@@ -248,7 +248,7 @@ class ExtensibleSearchPageController extends \PageController
         $page = $this->data();
         $engine = $page->SearchEngine;
         $classes = Config::inst()->get(FulltextSearchable::class, 'searchable_classes');
-        if (!$engine || (($engine !== 'Full-Text') && !ClassInfo::exists($engine)) || (($engine === 'Full-Text') && (!is_array($classes) || (count($classes) === 0)))) {
+        if (!$engine || (($engine !== 'Full-Text') && !ClassInfo::exists($engine)) || (($engine === 'Full-Text') && (!is_array($classes) || ($classes === [])))) {
 
             // The search engine has not been selected.
 
@@ -264,6 +264,7 @@ class ExtensibleSearchPageController extends \PageController
         if (!isset($data['Search'])) {
             $data['Search'] = '';
         }
+
         $search = $data['Search'];
         $request = $this->getRequest();
         $request->offsetSet('Search', $search);
@@ -273,9 +274,11 @@ class ExtensibleSearchPageController extends \PageController
         if (!isset($data['SortBy']) || !$data['SortBy']) {
             $data['SortBy'] = $page->SortBy;
         }
+
         if (!isset($data['SortDirection']) || !$data['SortDirection']) {
             $data['SortDirection'] = $page->SortDirection;
         }
+
         if (!isset($form)) {
             $form = $this->getForm($request);
         }

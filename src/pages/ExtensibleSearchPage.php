@@ -40,9 +40,9 @@ use Symbiote\Multisites\Multisites;
 
 class ExtensibleSearchPage extends \Page
 {
-    private static $table_name = 'ExtensibleSearchPage';
+    private static string $table_name = 'ExtensibleSearchPage';
 
-    private static $db = [
+    private static array $db = [
         'SearchEngine' => 'Varchar(255)',
         'SortBy' => 'Varchar(255)',
         'SortDirection' => "Enum('DESC, ASC', 'DESC')",
@@ -50,29 +50,29 @@ class ExtensibleSearchPage extends \Page
         'ResultsPerPage' => 'Int'
     ];
 
-    private static $defaults = [
+    private static array $defaults = [
         'ShowInMenus' => 0,
         'ShowInSearch' => 0,
         'ResultsPerPage' => 10
     ];
 
-    private static $has_many = [
+    private static array $has_many = [
         'History' => ExtensibleSearch::class,
         'Archives' => ExtensibleSearchArchive::class,
         'Suggestions' => ExtensibleSearchSuggestion::class
     ];
 
-    private static $many_many = [
+    private static array $many_many = [
         'SearchTrees' => SiteTree::class
     ];
 
-    private static $icon = 'nglasl/silverstripe-extensible-search: client/images/search.png';
+    private static string $icon = 'nglasl/silverstripe-extensible-search: client/images/search.png';
 
     /**
      *	The search engines that are available.
      */
 
-    private static $custom_search_engines = [];
+    private static array $custom_search_engines = [];
 
     /**
      *	The full-text search engine does not support hierarchy filtering.
@@ -121,23 +121,18 @@ class ExtensibleSearchPage extends \Page
                     DB::alteration_message("\"{$site->Title}\" Extensible Search Page", 'created');
                 }
             }
-        } else {
-
+        } elseif (!SiteTree::get()->filter('ClassName', [
+            ExtensibleSearchPage::class,
+            'ExtensibleSearchPage'
+        ])->first()) {
             // The problem is that class name mapping happens after this, but we need it right now to query pages.
-
-            if (!SiteTree::get()->filter('ClassName', [
-                ExtensibleSearchPage::class,
-                'ExtensibleSearchPage'
-            ])->first()) {
-
-                // Instantiate an extensible search page.
-
-                $page = ExtensibleSearchPage::create();
-                $page->Title = 'Search Page';
-                $page->write();
-                DB::alteration_message('"Default" Extensible Search Page', 'created');
-            }
+            // Instantiate an extensible search page.
+            $page = ExtensibleSearchPage::create();
+            $page->Title = 'Search Page';
+            $page->write();
+            DB::alteration_message('"Default" Extensible Search Page', 'created');
         }
+
         Versioned::set_stage($stage);
     }
 
@@ -173,7 +168,7 @@ class ExtensibleSearchPage extends \Page
 
         $configuration = Config::inst();
         $classes = $configuration->get(FulltextSearchable::class, 'searchable_classes');
-        if (is_array($classes) && (count($classes) > 0)) {
+        if (is_array($classes) && ($classes !== [])) {
             $engines['Full-Text'] = 'Full-Text';
         }
 
@@ -221,10 +216,7 @@ class ExtensibleSearchPage extends \Page
 
                     // Update the search trees to reflect this.
 
-                    $tree->setDisableFunction(function ($page) {
-
-                        return ($page->ParentID != 0);
-                    });
+                    $tree->setDisableFunction(fn($page): bool => $page->ParentID != 0);
                     $tree->setDescription('This <strong>search engine</strong> only supports limited hierarchy');
                 }
             }
@@ -439,8 +431,9 @@ class ExtensibleSearchPage extends \Page
                 // If null or falsey type, change to array
                 $fields = [];
             }
+
             return $fields + $selectable;
-        } elseif (($this->SearchEngine === 'Full-Text') && is_array($classes = Config::inst()->get(FulltextSearchable::class, 'searchable_classes')) && (count($classes) > 0)) {
+        } elseif (($this->SearchEngine === 'Full-Text') && is_array($classes = Config::inst()->get(FulltextSearchable::class, 'searchable_classes')) && ($classes !== [])) {
 
             // Determine the full-text specific selectable fields.
 
@@ -455,9 +448,11 @@ class ExtensibleSearchPage extends \Page
                 if (isset($fields['Title'])) {
                     $selectable['Title'] = _t('EXTENSIBLE_SEARCH.TITLE', 'Title');
                 }
+
                 if (isset($fields['MenuTitle'])) {
                     $selectable['MenuTitle'] = _t('EXTENSIBLE_SEARCH.NAVIGATION_TITLE', 'Navigation Title');
                 }
+
                 if (isset($fields['Sort'])) {
                     $selectable['Sort'] = _t('EXTENSIBLE_SEARCH.DISPLAY_ORDER', 'Display Order');
                 }
@@ -512,6 +507,7 @@ class ExtensibleSearchPage extends \Page
             $result->Results = $result->Results ? _t('EXTENSIBLE_SEARCH.TRUE', 'true') : _t('EXTENSIBLE_SEARCH.FALSE', 'false');
             $analytics->push($result);
         }
+
         return $analytics;
     }
 

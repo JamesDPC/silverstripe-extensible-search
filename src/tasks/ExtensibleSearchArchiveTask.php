@@ -15,7 +15,7 @@ use SilverStripe\ORM\Queries\SQLUpdate;
 
 class ExtensibleSearchArchiveTask extends BuildTask
 {
-    private static $segment = 'ExtensibleSearchArchiveTask';
+    private static string $segment = 'ExtensibleSearchArchiveTask';
 
     protected $title = 'Extensible Search Archiving';
 
@@ -25,7 +25,7 @@ class ExtensibleSearchArchiveTask extends BuildTask
      *	The number of analytics to archive for each search page.
      */
 
-    private static $number_to_archive = 100;
+    private static int $number_to_archive = 100;
 
     public function run($request)
     {
@@ -90,6 +90,7 @@ class ExtensibleSearchArchiveTask extends BuildTask
                 $query->execute();
             }
         }
+
         DB::alteration_message('<strong>Complete!</strong>');
     }
 

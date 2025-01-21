@@ -14,7 +14,7 @@ use Symbiote\Multisites\Multisites;
 
 class ExtensibleSearchExtension extends Extension
 {
-    private static $allowed_actions = [
+    private static array $allowed_actions = [
         'getSearchForm'
     ];
 
@@ -31,7 +31,7 @@ class ExtensibleSearchExtension extends Extension
 
         // Instantiate the search form, primarily excluding the sorting selection.
 
-        return ($page = $this->owner->getSearchPage()) ? ModelAsController::controller_for($page)->getSearchForm($request, $sorting) : null;
+        return ($page = $this->getOwner()->getSearchPage()) ? ModelAsController::controller_for($page)->getSearchForm($request, $sorting) : null;
     }
 
     /**
@@ -48,8 +48,9 @@ class ExtensibleSearchExtension extends Extension
         // This is required to support multiple sites.
 
         if (ClassInfo::exists(Multisites::class)) {
-            $pages = $pages->filter('SiteID', $this->owner->SiteID);
+            $pages = $pages->filter('SiteID', $this->getOwner()->SiteID);
         }
+
         return $pages->first();
     }
 

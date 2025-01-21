@@ -50,6 +50,7 @@ class ExtensibleSearchService
         if ($results > 0) {
             $this->logSuggestion($term, $pageID);
         }
+
         return $search;
     }
 
@@ -66,13 +67,13 @@ class ExtensibleSearchService
 
         // Make sure the search suggestions are enabled, and the search matches the minimum autocomplete length.
 
-        if (!Config::inst()->get(ExtensibleSearchSuggestion::class, 'enable_suggestions') || (strlen($term) < 3)) {
+        if (!Config::inst()->get(ExtensibleSearchSuggestion::class, 'enable_suggestions') || (strlen((string) $term) < 3)) {
             return null;
         }
 
         // Make sure the suggestion doesn't already exist.
 
-        $term = strtolower($term);
+        $term = strtolower((string) $term);
         $filter = [
             'Term' => $term,
             'ExtensibleSearchPageID' => $pageID
@@ -102,7 +103,7 @@ class ExtensibleSearchService
 
         try {
             $suggestion->write();
-        } catch (ValidationException $exception) {
+        } catch (ValidationException) {
 
             // This indicates a possible race condition.
 
@@ -110,11 +111,13 @@ class ExtensibleSearchService
             while ($suggestions->count() > 1) {
                 $suggestions->last()->delete();
             }
+
             $suggestion = $suggestions->first();
             $frequency = ExtensibleSearch::get()->filter($filter)->count();
             $suggestion->Frequency = $frequency;
             $suggestion->write();
         }
+
         return $suggestion;
     }
 
@@ -125,7 +128,7 @@ class ExtensibleSearchService
      *	@return string
      */
 
-    public function toggleSuggestionApproved($ID)
+    public function toggleSuggestionApproved($ID): ?string
     {
 
         if ($suggestion = ExtensibleSearchSuggestion::get()->byID($ID)) {
@@ -160,7 +163,7 @@ class ExtensibleSearchService
         // Make sure the current user has appropriate permission.
 
         $pageID = (int)$pageID;
-        if (($page = ExtensibleSearchPage::get_by_id(ExtensibleSearchPage::class, $pageID)) && $page->canView()) {
+        if (($page = \nglasl\extensible\ExtensibleSearchPage::get()->byID($pageID)) && $page->canView()) {
 
             // Retrieve the search suggestions.
 
@@ -176,6 +179,7 @@ class ExtensibleSearchService
 
             return $suggestions->column('Term');
         }
+
         return [];
     }
 
@@ -189,17 +193,17 @@ class ExtensibleSearchService
      *	@return array
      */
 
-    public function getSuggestions($term, $pageID, $limit = 5, $approved = true)
+    public function getSuggestions($term, $pageID, ?int $limit = 5, $approved = true)
     {
 
         // Make sure the search matches the minimum autocomplete length.
 
-        if ($term && (strlen($term) > 2)) {
+        if ($term && (strlen((string) $term) > 2)) {
 
             // Make sure the current user has appropriate permission.
 
             $pageID = (int)$pageID;
-            if (($page = ExtensibleSearchPage::get_by_id(ExtensibleSearchPage::class, $pageID)) && $page->canView()) {
+            if (($page = \nglasl\extensible\ExtensibleSearchPage::get()->byID($pageID)) && $page->canView()) {
 
                 // Retrieve the search suggestions.
 
@@ -214,6 +218,7 @@ class ExtensibleSearchService
                 return $suggestions->column('Term');
             }
         }
+
         return [];
     }
 

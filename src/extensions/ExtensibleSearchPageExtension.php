@@ -13,18 +13,12 @@ use Symbiote\MultiValueField\Fields\MultiValueDropdownField;
  */
 class ExtensibleSearchPageExtension extends DataExtension
 {
-    /**
-     * @var array
-     */
-    private static $db = [
+    private static array $db = [
         'DisplayedSortFields' => 'MultiValueField',
         'UseAdvancedSearch' => 'Boolean'
     ];
 
-    /**
-     * @var array
-     */
-    private static $defaults = [
+    private static array $defaults = [
         'UseAdvancedSearch' => 0
     ];
 
@@ -34,7 +28,7 @@ class ExtensibleSearchPageExtension extends DataExtension
     public function updateExtensibleSearchPageCMSFields(&$fields)
     {
 
-        if ($this->owner->SearchEngine) {
+        if ($this->getOwner()->SearchEngine) {
 
             // set to use advanced search
             $fields->insertBefore(

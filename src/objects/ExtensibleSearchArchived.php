@@ -11,9 +11,9 @@ use SilverStripe\ORM\DataObject;
 
 class ExtensibleSearchArchived extends DataObject
 {
-    private static $table_name = 'ExtensibleSearchArchived';
+    private static string $table_name = 'ExtensibleSearchArchived';
 
-    private static $db = [
+    private static array $db = [
         'Term' => 'Varchar(255)',
         'Frequency' => 'Int',
         'FrequencyPercentage' => 'Varchar(255)',
@@ -21,11 +21,11 @@ class ExtensibleSearchArchived extends DataObject
         'Results' => 'Varchar(255)'
     ];
 
-    private static $has_one = [
+    private static array $has_one = [
         'Archive' => ExtensibleSearchArchive::class
     ];
 
-    private static $summary_fields = [
+    private static array $summary_fields = [
         'Term',
         'Frequency',
         'FrequencyPercentage',

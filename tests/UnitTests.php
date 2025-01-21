@@ -27,7 +27,7 @@ class UnitTests extends SapphireTest
         ExtensibleSearchPage::class
     ];
 
-    public static function setUpBeforeClass()
+    public static function setUpBeforeClass(): void
     {
 
         parent::setUpBeforeClass();
@@ -49,7 +49,7 @@ class UnitTests extends SapphireTest
         }
     }
 
-    public function testSearchResults()
+    public function testSearchResults(): void
     {
 
         // The full-text search needs to be selected.
@@ -79,7 +79,7 @@ class UnitTests extends SapphireTest
         $this->assertEquals($results->Count, 1);
     }
 
-    public function testAnalytics()
+    public function testAnalytics(): void
     {
 
         $page = ExtensibleSearchPage::get()->first();
