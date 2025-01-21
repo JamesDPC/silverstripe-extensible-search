@@ -13,7 +13,6 @@ use Symbiote\MultiValueField\Fields\MultiValueDropdownField;
  */
 class ExtensibleSearchPageExtension extends DataExtension
 {
-
     /**
      * @var array
      */
@@ -32,9 +31,10 @@ class ExtensibleSearchPageExtension extends DataExtension
     /**
      * Apply selectable sort fields to the displayed sort fields
      */
-    public function updateExtensibleSearchPageCMSFields(&$fields) {
+    public function updateExtensibleSearchPageCMSFields(&$fields)
+    {
 
-        if($this->owner->SearchEngine) {
+        if ($this->owner->SearchEngine) {
 
             // set to use advanced search
             $fields->insertBefore(
@@ -54,7 +54,7 @@ class ExtensibleSearchPageExtension extends DataExtension
             );
 
             // add sort fields that can be displayed
-            if($sortByField = $fields->dataFieldByName('SortBy')) {
+            if ($sortByField = $fields->dataFieldByName('SortBy')) {
                 $fields->insertAfter(
                     'SortBy',
                     MultiValueDropdownField::create(

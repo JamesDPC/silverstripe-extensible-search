@@ -13,20 +13,20 @@ use SilverStripe\Forms\FormField;
  */
 class ExtensibleSearchPageControllerExtension extends Extension
 {
-
     /**
      * Return the sort by fields configured as an array
      * The key is the field name, the value is a configured label, applied as the default in an i18n string value
      */
-    public function getDisplayedSortFields() : array {
+    public function getDisplayedSortFields(): array
+    {
         $sortFields = [];
         $page = $this->owner->data();
-        if($displayedSortByFields = $page->DisplayedSortFields) {
+        if ($displayedSortByFields = $page->DisplayedSortFields) {
             $selectableSortFields = $page->getSelectableFields();
             $displayedFields = $displayedSortByFields->getValue();
-            foreach($displayedFields as $fieldName) {
+            foreach ($displayedFields as $fieldName) {
                 $fieldLabel = isset($selectableSortFields[ $fieldName ]) ? FormField::name_to_label($selectableSortFields[ $fieldName ]) : '';
-                if(!$fieldLabel) {
+                if (!$fieldLabel) {
                     $fieldLabel = FormField::name_to_label($fieldName);
                 }
                 $sortFields[ $fieldName ] = _t(
@@ -42,11 +42,12 @@ class ExtensibleSearchPageControllerExtension extends Extension
      * Apply configured fields for sorting to the form
      * @param Form $form
      */
-    public function applySortByFields(Form $form) {
+    public function applySortByFields(Form $form)
+    {
         $sortField = $form->Fields()->dataFieldByName('SortBy');
-        if($sortField) {
+        if ($sortField) {
             $fields = $this->getDisplayedSortFields();
-            if(count($fields) == 0) {
+            if (count($fields) == 0) {
                 // remove fields as there is no displayed sort
                 $form->Fields()->removeByName(['SortBy','SortDirection']);
             } else {
@@ -68,8 +69,9 @@ class ExtensibleSearchPageControllerExtension extends Extension
      * Update the search form
      * @param Form|null $form
      */
-    public function updateExtensibleSearchSearchForm(?Form $form) {
-        if($form) {
+    public function updateExtensibleSearchSearchForm(?Form $form)
+    {
+        if ($form) {
             $this->applySortByFields($form);
         }
     }

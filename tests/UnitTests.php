@@ -19,111 +19,114 @@ use SilverStripe\ORM\Search\FulltextSearchable;
  *	@author Nathan Glasl <nathan@symbiote.com.au>
  */
 
-class UnitTests extends SapphireTest {
+class UnitTests extends SapphireTest
+{
+    protected $usesDatabase = true;
 
-	protected $usesDatabase = true;
+    protected $requireDefaultRecordsFrom = [
+        ExtensibleSearchPage::class
+    ];
 
-	protected $requireDefaultRecordsFrom = array(
-		ExtensibleSearchPage::class
-	);
+    public static function setUpBeforeClass()
+    {
 
-	public static function setUpBeforeClass() {
+        parent::setUpBeforeClass();
 
-		parent::setUpBeforeClass();
+        // The full-text search needs to be enabled.
 
-		// The full-text search needs to be enabled.
+        $config = Config::modify();
+        $config->merge(FulltextSearchable::class, 'searchable_classes', [
+            SiteTree::class
+        ]);
+        $config->merge(SiteTree::class, 'create_table_options', [
+            'MySQLDatabase' => 'ENGINE=MyISAM'
+        ]);
 
-		$config = Config::modify();
-		$config->merge(FulltextSearchable::class, 'searchable_classes', array(
-			SiteTree::class
-		));
-		$config->merge(SiteTree::class, 'create_table_options', array(
-			'MySQLDatabase' => 'ENGINE=MyISAM'
-		));
+        // This extension throws errors when it has already been applied.
 
-		// This extension throws errors when it has already been applied.
+        if (!SiteTree::has_extension(FulltextSearchable::class)) {
+            SiteTree::add_extension(FulltextSearchable::class . "('Title', 'MenuTitle', 'Content', 'MetaDescription')");
+        }
+    }
 
-		if(!SiteTree::has_extension(FulltextSearchable::class)) {
-			SiteTree::add_extension(FulltextSearchable::class . "('Title', 'MenuTitle', 'Content', 'MetaDescription')");
-		}
-	}
+    public function testSearchResults()
+    {
 
-	public function testSearchResults() {
+        // The full-text search needs to be selected.
 
-		// The full-text search needs to be selected.
+        $page = ExtensibleSearchPage::get()->first();
+        $page->SearchEngine = 'Full-Text';
+        $page->write();
+        $controller = ModelAsController::controller_for($page);
 
-		$page = ExtensibleSearchPage::get()->first();
-		$page->SearchEngine = 'Full-Text';
-		$page->write();
-		$controller = ModelAsController::controller_for($page);
+        // This shouldn't find anything, since no searchable pages exist.
 
-		// This shouldn't find anything, since no searchable pages exist.
+        $results = $controller->getSearchResults();
+        $this->assertEquals($results->Count, 0);
 
-		$results = $controller->getSearchResults();
-		$this->assertEquals($results->Count, 0);
+        // Instantiate a searchable page.
 
-		// Instantiate a searchable page.
+        $searchable = SiteTree::create(
+            [
+                'Title' => 'Test'
+            ]
+        );
+        $searchable->write();
 
-		$searchable = SiteTree::create(
-			array(
-				'Title' => 'Test'
-			)
-		);
-		$searchable->write();
+        // This should now find the page.
 
-		// This should now find the page.
+        $results = $controller->getSearchResults();
+        $this->assertEquals($results->Count, 1);
+    }
 
-		$results = $controller->getSearchResults();
-		$this->assertEquals($results->Count, 1);
-	}
+    public function testAnalytics()
+    {
 
-	public function testAnalytics() {
+        $page = ExtensibleSearchPage::get()->first();
+        $controller = ModelAsController::controller_for($page);
 
-		$page = ExtensibleSearchPage::get()->first();
-		$controller = ModelAsController::controller_for($page);
+        // This shouldn't find anything, since the query doesn't match the page.
 
-		// This shouldn't find anything, since the query doesn't match the page.
+        $data = [
+            'Search' => 'Nothing'
+        ];
+        $results = $controller->getSearchResults($data);
+        $this->assertEquals($results->Count, 0);
 
-		$data = array(
-			'Search' => 'Nothing'
-		);
-		$results = $controller->getSearchResults($data);
-		$this->assertEquals($results->Count, 0);
+        // There should now be a single analytic, but no suggestions.
 
-		// There should now be a single analytic, but no suggestions.
+        $filter = [
+            'ExtensibleSearchPageID' => $page->ID
+        ];
+        $this->assertEquals(ExtensibleSearch::get()->filter($filter)->count(), 1);
+        $this->assertEquals(ExtensibleSearchSuggestion::get()->filter($filter)->count(), 0);
 
-		$filter = array(
-			'ExtensibleSearchPageID' => $page->ID
-		);
-		$this->assertEquals(ExtensibleSearch::get()->filter($filter)->count(), 1);
-		$this->assertEquals(ExtensibleSearchSuggestion::get()->filter($filter)->count(), 0);
+        // This should now find the page.
 
-		// This should now find the page.
+        $data = [
+            'Search' => 'Test'
+        ];
+        $results = $controller->getSearchResults($data);
+        $this->assertEquals($results->Count, 1);
 
-		$data = array(
-			'Search' => 'Test'
-		);
-		$results = $controller->getSearchResults($data);
-		$this->assertEquals($results->Count, 1);
+        // There should now be two analytics, and a single suggestion.
 
-		// There should now be two analytics, and a single suggestion.
+        $this->assertEquals(ExtensibleSearch::get()->filter($filter)->count(), 2);
+        $this->assertEquals(ExtensibleSearchSuggestion::get()->filter($filter)->count(), 1);
 
-		$this->assertEquals(ExtensibleSearch::get()->filter($filter)->count(), 2);
-		$this->assertEquals(ExtensibleSearchSuggestion::get()->filter($filter)->count(), 1);
+        // Trigger the task to archive past search analytics.
 
-		// Trigger the task to archive past search analytics.
+        singleton(ExtensibleSearchArchiveTask::class)->run(null);
+        $this->assertEquals(ExtensibleSearch::get()->filter($filter)->count(), 0);
+        $this->assertEquals(ExtensibleSearchSuggestion::get()->filter($filter)->count(), 1);
 
-		singleton(ExtensibleSearchArchiveTask::class)->run(null);
-		$this->assertEquals(ExtensibleSearch::get()->filter($filter)->count(), 0);
-		$this->assertEquals(ExtensibleSearchSuggestion::get()->filter($filter)->count(), 1);
+        // There should now be a single archive, containing two analytics.
 
-		// There should now be a single archive, containing two analytics.
-
-		$archives = ExtensibleSearchArchive::get()->filter($filter);
-		$this->assertEquals($archives->count(), 1);
-		$this->assertEquals(ExtensibleSearchArchived::get()->filter(array(
-			'ArchiveID' => $archives->first()->ID
-		))->count(), 2);
-	}
+        $archives = ExtensibleSearchArchive::get()->filter($filter);
+        $this->assertEquals($archives->count(), 1);
+        $this->assertEquals(ExtensibleSearchArchived::get()->filter([
+            'ArchiveID' => $archives->first()->ID
+        ])->count(), 2);
+    }
 
 }

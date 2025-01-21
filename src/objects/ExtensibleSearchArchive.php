@@ -15,112 +15,118 @@ use SilverStripe\ORM\FieldType\DBHTMLText;
  *	@author Nathan Glasl <nathan@symbiote.com.au>
  */
 
-class ExtensibleSearchArchive extends DataObject {
+class ExtensibleSearchArchive extends DataObject
+{
+    private static $table_name = 'ExtensibleSearchArchive';
 
-	private static $table_name = 'ExtensibleSearchArchive';
+    private static $db = [
+        'StartingDate' => 'Date',
+        'EndingDate' => 'Date'
+    ];
 
-	private static $db = array(
-		'StartingDate' => 'Date',
-		'EndingDate' => 'Date'
-	);
+    private static $has_one = [
+        'ExtensibleSearchPage' => ExtensibleSearchPage::class
+    ];
 
-	private static $has_one = array(
-		'ExtensibleSearchPage' => ExtensibleSearchPage::class
-	);
+    private static $has_many = [
+        'HistorySummary' => ExtensibleSearchArchived::class
+    ];
 
-	private static $has_many = array(
-		'HistorySummary' => ExtensibleSearchArchived::class
-	);
+    private static $default_sort = 'ID DESC';
 
-	private static $default_sort = 'ID DESC';
+    private static $summary_fields = [
+        'TitleSummary'
+    ];
 
-	private static $summary_fields = array(
-		'TitleSummary'
-	);
+    public function canCreate($member = null, $context = [])
+    {
 
-	public function canCreate($member = null, $context = array()) {
+        return false;
+    }
 
-		return false;
-	}
+    public function canDelete($member = null)
+    {
 
-	public function canDelete($member = null) {
+        return false;
+    }
 
-		return false;
-	}
+    /**
+     *	The archive date range.
+     *
+     *	@return string
+     */
 
-	/**
-	 *	The archive date range.
-	 *
-	 *	@return string
-	 */
+    public function getTitle()
+    {
 
-	public function getTitle() {
+        $starting = date('F Y', strtotime($this->StartingDate));
+        $ending = date('F Y', strtotime($this->EndingDate));
+        return "{$starting} → {$ending}";
+    }
 
-		$starting = date('F Y', strtotime($this->StartingDate));
-		$ending = date('F Y', strtotime($this->EndingDate));
-		return "{$starting} → {$ending}";
-	}
+    public function getCMSFields()
+    {
 
-	public function getCMSFields() {
+        $fields = parent::getCMSFields();
 
-		$fields = parent::getCMSFields();
+        // Remove any fields that are not required in their default state.
 
-		// Remove any fields that are not required in their default state.
+        $fields->removeByName('StartingDate');
+        $fields->removeByName('EndingDate');
+        $fields->removeByName('ExtensibleSearchPageID');
+        $fields->removeByName('HistorySummary');
 
-		$fields->removeByName('StartingDate');
-		$fields->removeByName('EndingDate');
-		$fields->removeByName('ExtensibleSearchPageID');
-		$fields->removeByName('HistorySummary');
+        // Instantiate the archived collection of search analytics.
 
-		// Instantiate the archived collection of search analytics.
+        $fields->addFieldToTab('Root.Main', GridField::create(
+            'HistorySummary',
+            _t('EXTENSIBLE_SEARCH.SUMMARY', 'Summary'),
+            $this->HistorySummary(),
+            $summaryConfiguration = GridFieldConfig_Base::create()
+        )->setModelClass(ExtensibleSearchArchived::class));
 
-		$fields->addFieldToTab('Root.Main', GridField::create(
-			'HistorySummary',
-			_t('EXTENSIBLE_SEARCH.SUMMARY', 'Summary'),
-			$this->HistorySummary(),
-			$summaryConfiguration = GridFieldConfig_Base::create()
-		)->setModelClass(ExtensibleSearchArchived::class));
+        // Instantiate an export button.
 
-		// Instantiate an export button.
+        $summaryConfiguration->addComponent(new GridFieldExportButton());
 
-		$summaryConfiguration->addComponent(new GridFieldExportButton());
+        // Update the custom summary fields to be sortable.
 
-		// Update the custom summary fields to be sortable.
+        $summaryConfiguration->getComponentByType(GridFieldSortableHeader::class)->setFieldSorting([
+            'FrequencyPercentage' => 'Frequency'
+        ]);
+        $summaryConfiguration->removeComponentsByType(GridFieldFilterHeader::class);
 
-		$summaryConfiguration->getComponentByType(GridFieldSortableHeader::class)->setFieldSorting(array(
-			'FrequencyPercentage' => 'Frequency'
-		));
-		$summaryConfiguration->removeComponentsByType(GridFieldFilterHeader::class);
+        // Allow extension customisation.
 
-		// Allow extension customisation.
+        $this->extend('updateExtensibleSearchArchiveCMSFields', $fields);
+        return $fields;
+    }
 
-		$this->extend('updateExtensibleSearchArchiveCMSFields', $fields);
-		return $fields;
-	}
+    public function fieldLabels($includerelations = true)
+    {
 
-	public function fieldLabels($includerelations = true) {
+        return [
+            'TitleSummary' => _t('EXTENSIBLE_SEARCH.DATE_RANGE', 'Date Range')
+        ];
+    }
 
-		return array(
-			'TitleSummary' => _t('EXTENSIBLE_SEARCH.DATE_RANGE', 'Date Range')
-		);
-	}
+    /**
+     *	The archive date range as HTML.
+     *
+     *	@return html
+     */
 
-	/**
-	 *	The archive date range as HTML.
-	 *
-	 *	@return html
-	 */
+    public function getTitleSummary()
+    {
 
-	public function getTitleSummary() {
+        $starting = date('F Y', strtotime($this->StartingDate));
+        $ending = date('F Y', strtotime($this->EndingDate));
 
-		$starting = date('F Y', strtotime($this->StartingDate));
-		$ending = date('F Y', strtotime($this->EndingDate));
+        // The following is required so HTML isn't automatically escaped.
 
-		// The following is required so HTML isn't automatically escaped.
-
-		$output = DBHTMLText::create();
-		$output->setValue("<strong>{$starting}</strong> → <strong>{$ending}</strong>");
-		return $output;
-	}
+        $output = DBHTMLText::create();
+        $output->setValue("<strong>{$starting}</strong> → <strong>{$ending}</strong>");
+        return $output;
+    }
 
 }

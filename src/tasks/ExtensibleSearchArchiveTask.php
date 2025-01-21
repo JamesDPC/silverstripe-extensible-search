@@ -13,83 +13,84 @@ use SilverStripe\ORM\Queries\SQLUpdate;
  *	@author Nathan Glasl <nathan@symbiote.com.au>
  */
 
-class ExtensibleSearchArchiveTask extends BuildTask {
+class ExtensibleSearchArchiveTask extends BuildTask
+{
+    private static $segment = 'ExtensibleSearchArchiveTask';
 
-	private static $segment = 'ExtensibleSearchArchiveTask';
+    protected $title = 'Extensible Search Archiving';
 
-	protected $title = 'Extensible Search Archiving';
+    protected $description = 'This creates an archived collection of analytics for each search page.';
 
-	protected $description = 'This creates an archived collection of analytics for each search page.';
+    /**
+     *	The number of analytics to archive for each search page.
+     */
 
-	/**
-	 *	The number of analytics to archive for each search page.
-	 */
+    private static $number_to_archive = 100;
 
-	private static $number_to_archive = 100;
+    public function run($request)
+    {
 
-	public function run($request) {
+        set_time_limit(0);
 
-		set_time_limit(0);
+        // Determine whether a search page has analytics.
 
-		// Determine whether a search page has analytics.
+        foreach (ExtensibleSearchPage::get() as $page) {
+            $history = $page->History();
+            if ($history->exists()) {
 
-		foreach(ExtensibleSearchPage::get() as $page) {
-			$history = $page->History();
-			if($history->exists()) {
+                // Instantiate an archive.
 
-				// Instantiate an archive.
+                $archive = ExtensibleSearchArchive::create(
+                    [
+                        'StartingDate' => $history->min('Created'),
+                        'EndingDate' => $history->max('Created'),
+                        'ExtensibleSearchPageID' => $page->ID
+                    ]
+                );
+                $archive->write();
 
-				$archive = ExtensibleSearchArchive::create(
-					array(
-						'StartingDate' => $history->min('Created'),
-						'EndingDate' => $history->max('Created'),
-						'ExtensibleSearchPageID' => $page->ID
-					)
-				);
-				$archive->write();
+                // Determine the search page specific analytics.
 
-				// Determine the search page specific analytics.
+                $counter = 0;
+                foreach ($page->getHistorySummary() as $summary) {
 
-				$counter = 0;
-				foreach($page->getHistorySummary() as $summary) {
+                    // Determine whether the number of analytics to archive has been reached.
 
-					// Determine whether the number of analytics to archive has been reached.
+                    if ($counter++ === self::config()->number_to_archive) {
+                        break;
+                    }
 
-					if($counter++ === self::config()->number_to_archive) {
-						break;
-					}
+                    // Instantiate an archived search analytic, and place it in the archive.
 
-					// Instantiate an archived search analytic, and place it in the archive.
+                    $archived = ExtensibleSearchArchived::create(
+                        $summary->toMap()
+                    );
+                    $archived->ArchiveID = $archive->ID;
+                    $archived->write();
+                }
 
-					$archived = ExtensibleSearchArchived::create(
-						$summary->toMap()
-					);
-					$archived->ArchiveID = $archive->ID;
-					$archived->write();
-				}
+                // The search analytics will be purged now that they've been archived.
 
-				// The search analytics will be purged now that they've been archived.
+                DB::alteration_message("{$history->count()} Archived");
+                $query = new SQLDelete(
+                    'ExtensibleSearch',
+                    "ExtensibleSearchPageID = {$page->ID}"
+                );
+                $query->execute();
 
-				DB::alteration_message("{$history->count()} Archived");
-				$query = new SQLDelete(
-					'ExtensibleSearch',
-					"ExtensibleSearchPageID = {$page->ID}"
-				);
-				$query->execute();
+                // The search suggestion frequencies depend on the analytics, so these require updating.
 
-				// The search suggestion frequencies depend on the analytics, so these require updating.
-
-				$query = new SQLUpdate(
-					'ExtensibleSearchSuggestion',
-					array(
-						'Frequency' => 0
-					),
-					"ExtensibleSearchPageID = {$page->ID}"
-				);
-				$query->execute();
-			}
-		}
-		DB::alteration_message('<strong>Complete!</strong>');
-	}
+                $query = new SQLUpdate(
+                    'ExtensibleSearchSuggestion',
+                    [
+                        'Frequency' => 0
+                    ],
+                    "ExtensibleSearchPageID = {$page->ID}"
+                );
+                $query->execute();
+            }
+        }
+        DB::alteration_message('<strong>Complete!</strong>');
+    }
 
 }
