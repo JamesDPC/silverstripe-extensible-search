@@ -94,7 +94,6 @@ class ExtensibleSearchPageController extends \PageController
      *
      *	@parameter <{REQUEST}> http request
      *	@parameter <{DISPLAY_SORTING}> boolean
-     *	@return search form
      */
 
     public function getForm($request = null, $sorting = true)
@@ -188,7 +187,6 @@ class ExtensibleSearchPageController extends \PageController
      *
      *	@parameter <{REQUEST}> http request
      *	@parameter <{DISPLAY_SORTING}> boolean
-     *	@return search form
      */
 
     public function Form($request = null, $sorting = true)
@@ -204,7 +202,6 @@ class ExtensibleSearchPageController extends \PageController
      *
      *	@parameter <{REQUEST}> http request
      *	@parameter <{DISPLAY_SORTING}> boolean
-     *	@return search form
      */
 
     public function getSearchForm($request = null, $sorting = false)
@@ -237,7 +234,6 @@ class ExtensibleSearchPageController extends \PageController
      *
      *	@parameter <{SEARCH_PARAMETERS}> array
      *	@parameter <{SEARCH_FORM}> search form
-     *	@return html text
      */
 
     public function getSearchResults($data = null, $form = null)
@@ -347,7 +343,7 @@ class ExtensibleSearchPageController extends \PageController
             // The search engine may only support limited hierarchy filtering for multiple sites.
 
             $filter = $page->SearchTrees()->column();
-            if (count($filter) && (($hierarchy = $page->supports_hierarchy) || ClassInfo::exists(Multisites::class))) {
+            if (count($filter) && (($hierarchy = $page->supports_hierarchy) || class_exists(Multisites::class))) {
 
                 // Apply the search trees filtering.
 

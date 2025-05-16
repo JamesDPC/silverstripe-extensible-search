@@ -64,7 +64,6 @@ class ExtensibleSearchAPI extends Controller
      *	Retrieve the search suggestions that have been approved (great for client side filtering).
      *
      *	@URLparameter page <{EXTENSIBLE_SEARCH_PAGE_ID}> integer
-     *	@return JSON
      */
 
     public function getPageSuggestions($request)
@@ -90,7 +89,6 @@ class ExtensibleSearchAPI extends Controller
      *
      *	@URLparameter term <{SEARCH_TERM}> string
      *	@URLparameter page <{EXTENSIBLE_SEARCH_PAGE_ID}> integer
-     *	@return JSON
      */
 
     public function getSuggestions($request)

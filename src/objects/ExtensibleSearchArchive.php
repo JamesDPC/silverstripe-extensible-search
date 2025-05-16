@@ -87,7 +87,7 @@ class ExtensibleSearchArchive extends DataObject
 
         // Instantiate an export button.
 
-        $summaryConfiguration->addComponent(new GridFieldExportButton());
+        $summaryConfiguration->addComponent(GridFieldExportButton::create());
 
         // Update the custom summary fields to be sortable.
 
@@ -112,8 +112,6 @@ class ExtensibleSearchArchive extends DataObject
 
     /**
      *	The archive date range as HTML.
-     *
-     *	@return html
      */
 
     public function getTitleSummary()

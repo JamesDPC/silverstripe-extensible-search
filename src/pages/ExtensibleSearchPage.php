@@ -93,13 +93,13 @@ class ExtensibleSearchPage extends \Page
 
         // Determine whether pages should be created.
 
-        if (!self::config()->create_default_pages) {
+        if (!self::config()->get('create_default_pages')) {
             return;
         }
 
         // This is required to support multiple sites.
 
-        if (ClassInfo::exists(Multisites::class)) {
+        if (class_exists(Site::class)) {
             foreach (Site::get() as $site) {
 
                 // The problem is that class name mapping happens after this, but we need it right now to query pages.
@@ -149,7 +149,7 @@ class ExtensibleSearchPage extends \Page
         // Determine the search engines that are available.
 
         $engines = [];
-        foreach (self::config()->custom_search_engines as $engine => $display) {
+        foreach (self::config()->get('custom_search_engines') as $engine => $display) {
 
             // The search engines may define an optional display title.
 
@@ -200,7 +200,7 @@ class ExtensibleSearchPage extends \Page
 
             // The search engine may only support limited hierarchy filtering for multiple sites.
 
-            if ($hierarchy || ClassInfo::exists(Multisites::class)) {
+            if ($hierarchy || class_exists(Multisites::class)) {
 
                 // Display the search trees selection.
 

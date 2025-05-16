@@ -46,7 +46,7 @@ class ExtensibleSearchPageControllerExtension extends Extension
     public function applySortByFields(Form $form)
     {
         $sortField = $form->Fields()->dataFieldByName('SortBy');
-        if ($sortField) {
+        if ($sortField && $sortField instanceof \SilverStripe\Forms\SelectField) {
             $fields = $this->getDisplayedSortFields();
             if (count($fields) == 0) {
                 // remove fields as there is no displayed sort

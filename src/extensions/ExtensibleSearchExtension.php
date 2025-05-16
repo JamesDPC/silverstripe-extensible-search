@@ -23,7 +23,6 @@ class ExtensibleSearchExtension extends Extension
      *
      *	@parameter <{REQUEST}> http request
      *	@parameter <{DISPLAY_SORTING}> boolean
-     *	@return search form
      */
 
     public function getSearchForm($request = null, $sorting = false)
@@ -37,7 +36,6 @@ class ExtensibleSearchExtension extends Extension
     /**
      *	Retrieve the search page.
      *
-     *	@return extensible search page
      */
 
     public function getSearchPage()
@@ -47,7 +45,7 @@ class ExtensibleSearchExtension extends Extension
 
         // This is required to support multiple sites.
 
-        if (ClassInfo::exists(Multisites::class)) {
+        if (class_exists(Multisites::class)) {
             $pages = $pages->filter('SiteID', $this->getOwner()->SiteID);
         }
 
