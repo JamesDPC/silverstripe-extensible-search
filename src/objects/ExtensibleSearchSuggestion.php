@@ -12,8 +12,8 @@ use SilverStripe\Security\Security;
 use SilverStripe\View\Requirements;
 
 /**
- *	Details of a user search generated suggestion.
- *	@author Nathan Glasl <nathan@symbiote.com.au>
+ * Details of a user search generated suggestion.
+ * @author Nathan Glasl <nathan@symbiote.com.au>
  */
 
 class ExtensibleSearchSuggestion extends DataObject implements PermissionProvider
@@ -21,7 +21,7 @@ class ExtensibleSearchSuggestion extends DataObject implements PermissionProvide
     private static string $table_name = 'ExtensibleSearchSuggestion';
 
     /**
-     *	Store the frequency to make search suggestion relevance more efficient.
+     * Store the frequency to make search suggestion relevance more efficient.
      */
 
     private static array $db = [
@@ -49,19 +49,19 @@ class ExtensibleSearchSuggestion extends DataObject implements PermissionProvide
     ];
 
     /**
-     *	Allow the ability to disable search suggestions.
+     * Allow the ability to disable search suggestions.
      */
 
     private static bool $enable_suggestions = true;
 
     /**
-     *	Allow the ability to automatically approve user search generated suggestions.
+     * Allow the ability to automatically approve user search generated suggestions.
      */
 
     private static bool $automatic_approval = false;
 
     /**
-     *	Create a unique permission for management of search suggestions.
+     * Create a unique permission for management of search suggestions.
      */
 
     public function providePermissions()
@@ -101,9 +101,9 @@ class ExtensibleSearchSuggestion extends DataObject implements PermissionProvide
     }
 
     /**
-     *	Retrieve the search suggestion title.
+     * Retrieve the search suggestion title.
      *
-     *	@return string
+     * @return string
      */
 
     public function getTitle()
@@ -134,7 +134,7 @@ class ExtensibleSearchSuggestion extends DataObject implements PermissionProvide
     }
 
     /**
-     *	Confirm that the current search suggestion is valid.
+     * Confirm that the current search suggestion is valid.
      */
 
     public function validate()
@@ -172,9 +172,9 @@ class ExtensibleSearchSuggestion extends DataObject implements PermissionProvide
     }
 
     /**
-     *	Retrieve the frequency for display purposes.
+     * Retrieve the frequency for display purposes.
      *
-     *	@return string
+     * @return string
      */
 
     public function getFrequencySummary()
@@ -184,7 +184,7 @@ class ExtensibleSearchSuggestion extends DataObject implements PermissionProvide
     }
 
     /**
-     *	Retrieve the frequency percentage.
+     * Retrieve the frequency percentage.
      */
     public function getFrequencyPercentage(): string
     {
@@ -194,9 +194,9 @@ class ExtensibleSearchSuggestion extends DataObject implements PermissionProvide
     }
 
     /**
-     *	Retrieve the approved field for update purposes.
+     * Retrieve the approved field for update purposes.
      *
-     *	@return string
+     * @return string
      */
 
     public function getApprovedField()

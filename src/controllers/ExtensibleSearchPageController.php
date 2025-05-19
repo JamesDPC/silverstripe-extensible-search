@@ -14,7 +14,7 @@ use SilverStripe\ORM\Search\FulltextSearchable;
 use Symbiote\Multisites\Multisites;
 
 /**
- *	@author Nathan Glasl <nathan@symbiote.com.au>
+ * @author Nathan Glasl <nathan@symbiote.com.au>
  */
 
 class ExtensibleSearchPageController extends \PageController
@@ -32,7 +32,7 @@ class ExtensibleSearchPageController extends \PageController
     ];
 
     /**
-     *	Determine whether the search page should start with a listing.
+     * Determine whether the search page should start with a listing.
      */
 
     public function index()
@@ -90,10 +90,10 @@ class ExtensibleSearchPageController extends \PageController
     }
 
     /**
-     *	Instantiate the search form.
+     * Instantiate the search form.
      *
-     *	@parameter <{REQUEST}> http request
-     *	@parameter <{DISPLAY_SORTING}> boolean
+     * @parameter <{REQUEST}> http request
+     * @parameter <{DISPLAY_SORTING}> boolean
      */
 
     public function getForm($request = null, $sorting = true): ?SearchForm
@@ -183,10 +183,10 @@ class ExtensibleSearchPageController extends \PageController
     }
 
     /**
-     *	Instantiate the search form.
+     * Instantiate the search form.
      *
-     *	@parameter <{REQUEST}> http request
-     *	@parameter <{DISPLAY_SORTING}> boolean
+     * @parameter <{REQUEST}> http request
+     * @parameter <{DISPLAY_SORTING}> boolean
      */
 
     public function Form($request = null, $sorting = true)
@@ -198,10 +198,10 @@ class ExtensibleSearchPageController extends \PageController
     }
 
     /**
-     *	Instantiate the search form, primarily outside the search page.
+     * Instantiate the search form, primarily outside the search page.
      *
-     *	@parameter <{REQUEST}> http request
-     *	@parameter <{DISPLAY_SORTING}> boolean
+     * @parameter <{REQUEST}> http request
+     * @parameter <{DISPLAY_SORTING}> boolean
      */
 
     public function getSearchForm($request = null, $sorting = false)
@@ -231,10 +231,10 @@ class ExtensibleSearchPageController extends \PageController
     }
 
     /**
-     *	Display the search form results.
+     * Display the search form results.
      *
-     *	@parameter <{SEARCH_PARAMETERS}> array
-     *	@parameter <{SEARCH_FORM}> search form
+     * @parameter <{SEARCH_PARAMETERS}> array
+     * @parameter <{SEARCH_FORM}> search form
      */
 
     public function getSearchResults($data = null, $form = null)

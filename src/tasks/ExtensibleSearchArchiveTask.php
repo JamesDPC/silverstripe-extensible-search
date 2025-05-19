@@ -8,9 +8,9 @@ use SilverStripe\ORM\Queries\SQLDelete;
 use SilverStripe\ORM\Queries\SQLUpdate;
 
 /**
- *	This creates an archived collection of analytics for each search page.
- *	NOTE: The search analytics will be purged after this has taken place.
- *	@author Nathan Glasl <nathan@symbiote.com.au>
+ * This creates an archived collection of analytics for each search page.
+ * NOTE: The search analytics will be purged after this has taken place.
+ * @author Nathan Glasl <nathan@symbiote.com.au>
  */
 
 class ExtensibleSearchArchiveTask extends BuildTask
@@ -22,7 +22,7 @@ class ExtensibleSearchArchiveTask extends BuildTask
     protected $description = 'This creates an archived collection of analytics for each search page.';
 
     /**
-     *	The number of analytics to archive for each search page.
+     * The number of analytics to archive for each search page.
      */
 
     private static int $number_to_archive = 100;

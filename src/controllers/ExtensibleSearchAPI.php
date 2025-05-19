@@ -9,8 +9,8 @@ use SilverStripe\Security\Permission;
 use SilverStripe\Security\Security;
 
 /**
- *	Passes the current request over to the `ExtensibleSearchService`.
- *	@author Nathan Glasl <nathan@symbiote.com.au>
+ * Passes the current request over to the `ExtensibleSearchService`.
+ * @author Nathan Glasl <nathan@symbiote.com.au>
  */
 
 class ExtensibleSearchAPI extends Controller
@@ -28,7 +28,7 @@ class ExtensibleSearchAPI extends Controller
     ];
 
     /**
-     *	Reject a direct request.
+     * Reject a direct request.
      */
 
     public function index()
@@ -38,7 +38,7 @@ class ExtensibleSearchAPI extends Controller
     }
 
     /**
-     *	Toggle a search suggestion's approval.
+     * Toggle a search suggestion's approval.
      */
 
     public function toggleSuggestionApproved($request)
@@ -61,9 +61,9 @@ class ExtensibleSearchAPI extends Controller
     }
 
     /**
-     *	Retrieve the search suggestions that have been approved (great for client side filtering).
+     * Retrieve the search suggestions that have been approved (great for client side filtering).
      *
-     *	@URLparameter page <{EXTENSIBLE_SEARCH_PAGE_ID}> integer
+     * @URLparameter page <{EXTENSIBLE_SEARCH_PAGE_ID}> integer
      */
 
     public function getPageSuggestions($request)
@@ -85,10 +85,10 @@ class ExtensibleSearchAPI extends Controller
     }
 
     /**
-     *	Retrieve the most relevant search suggestions that have been approved.
+     * Retrieve the most relevant search suggestions that have been approved.
      *
-     *	@URLparameter term <{SEARCH_TERM}> string
-     *	@URLparameter page <{EXTENSIBLE_SEARCH_PAGE_ID}> integer
+     * @URLparameter term <{SEARCH_TERM}> string
+     * @URLparameter page <{EXTENSIBLE_SEARCH_PAGE_ID}> integer
      */
 
     public function getSuggestions($request)

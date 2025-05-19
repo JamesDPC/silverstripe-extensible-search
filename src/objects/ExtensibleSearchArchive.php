@@ -11,8 +11,8 @@ use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBHTMLText;
 
 /**
- *	This represents an archived collection of search analytics.
- *	@author Nathan Glasl <nathan@symbiote.com.au>
+ * This represents an archived collection of search analytics.
+ * @author Nathan Glasl <nathan@symbiote.com.au>
  */
 
 class ExtensibleSearchArchive extends DataObject
@@ -51,9 +51,9 @@ class ExtensibleSearchArchive extends DataObject
     }
 
     /**
-     *	The archive date range.
+     * The archive date range.
      *
-     *	@return string
+     * @return string
      */
 
     public function getTitle()
@@ -111,7 +111,7 @@ class ExtensibleSearchArchive extends DataObject
     }
 
     /**
-     *	The archive date range as HTML.
+     * The archive date range as HTML.
      */
 
     public function getTitleSummary()

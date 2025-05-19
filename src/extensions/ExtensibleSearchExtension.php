@@ -8,8 +8,8 @@ use SilverStripe\Core\Extension;
 use Symbiote\Multisites\Multisites;
 
 /**
- *	This extension is used to implement a search form, primarily outside the search page.
- *	@author Nathan Glasl <nathan@symbiote.com.au>
+ * This extension is used to implement a search form, primarily outside the search page.
+ * @author Nathan Glasl <nathan@symbiote.com.au>
  */
 
 class ExtensibleSearchExtension extends Extension
@@ -19,10 +19,10 @@ class ExtensibleSearchExtension extends Extension
     ];
 
     /**
-     *	Instantiate the search form, primarily outside the search page.
+     * Instantiate the search form, primarily outside the search page.
      *
-     *	@parameter <{REQUEST}> http request
-     *	@parameter <{DISPLAY_SORTING}> boolean
+     * @parameter <{REQUEST}> http request
+     * @parameter <{DISPLAY_SORTING}> boolean
      */
 
     public function getSearchForm($request = null, $sorting = false)
@@ -41,7 +41,7 @@ class ExtensibleSearchExtension extends Extension
     }
 
     /**
-     *	Retrieve the search page.
+     * Retrieve the search page.
      *
      */
 

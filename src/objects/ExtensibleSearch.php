@@ -6,8 +6,8 @@ use SilverStripe\Core\Config\Config;
 use SilverStripe\ORM\DataObject;
 
 /**
- *	Details of a user search that are retrieved for analytics.
- *	@author Nathan Glasl <nathan@symbiote.com.au>
+ * Details of a user search that are retrieved for analytics.
+ * @author Nathan Glasl <nathan@symbiote.com.au>
  */
 
 class ExtensibleSearch extends DataObject
@@ -36,7 +36,7 @@ class ExtensibleSearch extends DataObject
     ];
 
     /**
-     *	Allow the ability to disable search analytics.
+     * Allow the ability to disable search analytics.
      */
 
     private static bool $enable_analytics = true;
@@ -60,7 +60,7 @@ class ExtensibleSearch extends DataObject
     }
 
     /**
-     *	Retrieve the search time for display purposes.
+     * Retrieve the search time for display purposes.
      */
     public function getTimeTakenSummary(): float
     {
@@ -69,9 +69,9 @@ class ExtensibleSearch extends DataObject
     }
 
     /**
-     *	Retrieve the search engine for display purposes.
+     * Retrieve the search engine for display purposes.
      *
-     *	@return string
+     * @return string
      */
 
     public function getSearchEngineSummary()
