@@ -14,6 +14,11 @@ use SilverStripe\View\Requirements;
 /**
  * Details of a user search generated suggestion.
  * @author Nathan Glasl <nathan@symbiote.com.au>
+ * @property ?string $Term
+ * @property int $Frequency
+ * @property bool $Approved
+ * @property int $ExtensibleSearchPageID
+ * @method \nglasl\extensible\ExtensibleSearchPage ExtensibleSearchPage()
  */
 class ExtensibleSearchSuggestion extends DataObject implements PermissionProvider
 {
@@ -59,6 +64,7 @@ class ExtensibleSearchSuggestion extends DataObject implements PermissionProvide
     /**
      * Create a unique permission for management of search suggestions.
      */
+    #[\Override]
     public function providePermissions()
     {
 
@@ -71,24 +77,28 @@ class ExtensibleSearchSuggestion extends DataObject implements PermissionProvide
         ];
     }
 
+    #[\Override]
     public function canView($member = null)
     {
 
         return true;
     }
 
+    #[\Override]
     public function canEdit($member = null)
     {
 
         return $this->canCreate($member);
     }
 
+    #[\Override]
     public function canCreate($member = null, $context = [])
     {
 
         return Permission::checkMember($member, 'EXTENSIBLE_SEARCH_SUGGESTIONS');
     }
 
+    #[\Override]
     public function canDelete($member = null)
     {
 
@@ -100,12 +110,14 @@ class ExtensibleSearchSuggestion extends DataObject implements PermissionProvide
      *
      * @return string
      */
+    #[\Override]
     public function getTitle()
     {
 
         return $this->Term;
     }
 
+    #[\Override]
     public function getCMSFields()
     {
 
@@ -130,6 +142,7 @@ class ExtensibleSearchSuggestion extends DataObject implements PermissionProvide
     /**
      * Confirm that the current search suggestion is valid.
      */
+    #[\Override]
     public function validate()
     {
 
@@ -153,6 +166,7 @@ class ExtensibleSearchSuggestion extends DataObject implements PermissionProvide
         return $result;
     }
 
+    #[\Override]
     public function fieldLabels($includerelations = true)
     {
 

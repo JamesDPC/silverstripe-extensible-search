@@ -25,6 +25,7 @@ class ExtensibleSearchArchiveTask extends BuildTask
      */
     private static int $number_to_archive = 100;
 
+    #[\Override]
     public function run($request)
     {
 

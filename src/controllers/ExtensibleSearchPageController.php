@@ -18,6 +18,7 @@ use Symbiote\Multisites\Multisites;
 
 /**
  * @author Nathan Glasl <nathan@symbiote.com.au>
+ * @extends \PageController<\nglasl\extensible\ExtensibleSearchPage>
  */
 class ExtensibleSearchPageController extends \PageController
 {
@@ -182,7 +183,7 @@ class ExtensibleSearchPageController extends \PageController
     /**
      * Instantiate the search form.
      */
-    public function Form(?HTTPRequest $request = null, bool|string $sorting = true)
+    public function Form(?HTTPRequest $request = null, bool|string $sorting = true): ?\SilverStripe\CMS\Search\SearchForm
     {
 
         // This provides consistency when it comes to defining parameters from the template.
@@ -199,7 +200,7 @@ class ExtensibleSearchPageController extends \PageController
         // Instantiate the search form, primarily excluding the sorting selection.
 
         $form = $this->getForm($request, $sorting);
-        if ($form) {
+        if ($form instanceof \SilverStripe\CMS\Search\SearchForm) {
 
             // When the search form is displayed twice, this prevents a duplicate element ID.
 

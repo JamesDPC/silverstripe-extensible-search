@@ -13,6 +13,11 @@ use SilverStripe\ORM\FieldType\DBHTMLText;
 /**
  * This represents an archived collection of search analytics.
  * @author Nathan Glasl <nathan@symbiote.com.au>
+ * @property ?string $StartingDate
+ * @property ?string $EndingDate
+ * @property int $ExtensibleSearchPageID
+ * @method \nglasl\extensible\ExtensibleSearchPage ExtensibleSearchPage()
+ * @method \SilverStripe\ORM\HasManyList<\nglasl\extensible\ExtensibleSearchArchived> HistorySummary()
  */
 class ExtensibleSearchArchive extends DataObject
 {
@@ -37,12 +42,14 @@ class ExtensibleSearchArchive extends DataObject
         'TitleSummary'
     ];
 
+    #[\Override]
     public function canCreate($member = null, $context = [])
     {
 
         return false;
     }
 
+    #[\Override]
     public function canDelete($member = null)
     {
 
@@ -54,6 +61,7 @@ class ExtensibleSearchArchive extends DataObject
      *
      * @return string
      */
+    #[\Override]
     public function getTitle()
     {
 
@@ -62,6 +70,7 @@ class ExtensibleSearchArchive extends DataObject
         return "{$starting} → {$ending}";
     }
 
+    #[\Override]
     public function getCMSFields()
     {
 
@@ -100,6 +109,7 @@ class ExtensibleSearchArchive extends DataObject
         return $fields;
     }
 
+    #[\Override]
     public function fieldLabels($includerelations = true)
     {
 

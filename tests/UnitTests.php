@@ -28,6 +28,7 @@ class UnitTests extends SapphireTest
         ExtensibleSearchPage::class
     ];
 
+    #[\Override]
     public static function setUpBeforeClass(): void
     {
 

@@ -11,8 +11,8 @@ use Symbiote\Multisites\Multisites;
 /**
  * This extension is used to implement a search form, primarily outside the search page.
  * @author Nathan Glasl <nathan@symbiote.com.au>
+ * @extends \SilverStripe\Core\Extension<static>
  */
-
 class ExtensibleSearchExtension extends Extension
 {
     private static array $allowed_actions = [

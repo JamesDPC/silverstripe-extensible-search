@@ -35,6 +35,15 @@ use Symbiote\Multisites\Multisites;
 /**
  * The page used to display search results, analytics and suggestions, allowing user customisation and developer extension.
  * @author Nathan Glasl <nathan@symbiote.com.au>
+ * @property ?string $SearchEngine
+ * @property ?string $SortBy
+ * @property ?string $SortDirection
+ * @property bool $StartWithListing
+ * @property int $ResultsPerPage
+ * @method \SilverStripe\ORM\HasManyList<\nglasl\extensible\ExtensibleSearch> History()
+ * @method \SilverStripe\ORM\HasManyList<\nglasl\extensible\ExtensibleSearchArchive> Archives()
+ * @method \SilverStripe\ORM\HasManyList<\nglasl\extensible\ExtensibleSearchSuggestion> Suggestions()
+ * @method \SilverStripe\ORM\ManyManyList<\SilverStripe\CMS\Model\SiteTree> SearchTrees()
  */
 class ExtensibleSearchPage extends \Page
 {
@@ -79,6 +88,7 @@ class ExtensibleSearchPage extends \Page
     /**
      * Instantiate a search page, should one not exist.
      */
+    #[\Override]
     public function requireDefaultRecords()
     {
 
@@ -134,6 +144,7 @@ class ExtensibleSearchPage extends \Page
     /**
      * Display the search engine specific configuration, and the search page specific analytics and suggestions.
      */
+    #[\Override]
     public function getCMSFields()
     {
 
@@ -365,6 +376,7 @@ class ExtensibleSearchPage extends \Page
         return $fields;
     }
 
+    #[\Override]
     public function onBeforeWrite()
     {
 

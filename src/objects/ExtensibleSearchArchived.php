@@ -7,6 +7,13 @@ use SilverStripe\ORM\DataObject;
 /**
  * This represents an archived search analytic.
  * @author Nathan Glasl <nathan@symbiote.com.au>
+ * @property ?string $Term
+ * @property int $Frequency
+ * @property ?string $FrequencyPercentage
+ * @property ?string $AverageTimeTaken
+ * @property ?string $Results
+ * @property int $ArchiveID
+ * @method \nglasl\extensible\ExtensibleSearchArchive Archive()
  */
 class ExtensibleSearchArchived extends DataObject
 {
@@ -32,24 +39,28 @@ class ExtensibleSearchArchived extends DataObject
         'Results'
     ];
 
+    #[\Override]
     public function canEdit($member = null)
     {
 
         return false;
     }
 
+    #[\Override]
     public function canCreate($member = null, $context = [])
     {
 
         return false;
     }
 
+    #[\Override]
     public function canDelete($member = null)
     {
 
         return false;
     }
 
+    #[\Override]
     public function fieldLabels($includerelations = true)
     {
 

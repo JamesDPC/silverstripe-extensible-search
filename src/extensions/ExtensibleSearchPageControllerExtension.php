@@ -10,6 +10,7 @@ use SilverStripe\Forms\FormField;
  * Update search form based on configuration
  * Extension can be applied to nglasl\extensible\ExtensibleSearchPageController
  * @author James
+ * @extends \SilverStripe\Core\Extension<static>
  */
 class ExtensibleSearchPageControllerExtension extends Extension
 {

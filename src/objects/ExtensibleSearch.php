@@ -8,6 +8,12 @@ use SilverStripe\ORM\DataObject;
 /**
  * Details of a user search that are retrieved for analytics.
  * @author Nathan Glasl <nathan@symbiote.com.au>
+ * @property ?string $Term
+ * @property int $Results
+ * @property float $Time
+ * @property ?string $SearchEngine
+ * @property int $ExtensibleSearchPageID
+ * @method \nglasl\extensible\ExtensibleSearchPage ExtensibleSearchPage()
  */
 class ExtensibleSearch extends DataObject
 {
@@ -39,12 +45,14 @@ class ExtensibleSearch extends DataObject
      */
     private static bool $enable_analytics = true;
 
+    #[\Override]
     public function canView($member = null)
     {
 
         return true;
     }
 
+    #[\Override]
     public function fieldLabels($includerelations = true)
     {
 
