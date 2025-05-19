@@ -20,7 +20,6 @@ class ExtensibleSearchService
      *	@parameter <{SEARCH_TIME}> float
      *	@parameter <{SEARCH_ENGINE}> string
      *	@parameter <{EXTENSIBLE_SEARCH_PAGE_ID}> integer
-     *	@return extensible search
      */
 
     public function logSearch($term, $results, $time, $engine, $pageID)
@@ -59,7 +58,6 @@ class ExtensibleSearchService
      *
      *	@parameter <{SEARCH_TERM}> string
      *	@parameter <{EXTENSIBLE_SEARCH_PAGE_ID}> integer
-     *	@return extensible search suggestion
      */
 
     public function logSuggestion($term, $pageID)

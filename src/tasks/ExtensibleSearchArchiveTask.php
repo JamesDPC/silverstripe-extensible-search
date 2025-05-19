@@ -56,7 +56,7 @@ class ExtensibleSearchArchiveTask extends BuildTask
 
                     // Determine whether the number of analytics to archive has been reached.
 
-                    if ($counter++ === self::config()->number_to_archive) {
+                    if ($counter++ === self::config()->get('number_to_archive')) {
                         break;
                     }
 
@@ -74,7 +74,9 @@ class ExtensibleSearchArchiveTask extends BuildTask
                 DB::alteration_message("{$history->count()} Archived");
                 $query = new SQLDelete(
                     'ExtensibleSearch',
-                    "ExtensibleSearchPageID = {$page->ID}"
+                    [
+                        'ExtensibleSearchPageID = ?' => $page->ID
+                    ]
                 );
                 $query->execute();
 
@@ -85,7 +87,9 @@ class ExtensibleSearchArchiveTask extends BuildTask
                     [
                         'Frequency' => 0
                     ],
-                    "ExtensibleSearchPageID = {$page->ID}"
+                    [
+                        'ExtensibleSearchPageID = ?' => $page->ID
+                    ]
                 );
                 $query->execute();
             }

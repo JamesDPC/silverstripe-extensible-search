@@ -96,7 +96,7 @@ class ExtensibleSearchPageController extends \PageController
      *	@parameter <{DISPLAY_SORTING}> boolean
      */
 
-    public function getForm($request = null, $sorting = true)
+    public function getForm($request = null, $sorting = true): ?SearchForm
     {
 
         // Determine whether a search engine has been selected.
@@ -218,9 +218,10 @@ class ExtensibleSearchPageController extends \PageController
 
             // Replace the search title with a placeholder.
 
-            $search = $form->Fields()->dataFieldByName('Search');
-            $search->setAttribute('placeholder', $search->Title());
-            $search->setTitle(null);
+            if($search = $form->Fields()->dataFieldByName('Search')) {
+                $search->setAttribute('placeholder', $search->Title());
+                $search->setTitle('');
+            }
         }
 
         // Allow extension customisation.

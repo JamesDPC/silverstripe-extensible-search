@@ -2,7 +2,6 @@
 
 namespace nglasl\extensible;
 
-use SilverStripe\CMS\Controllers\CMSPageHistoryController;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\ClassInfo;
@@ -260,13 +259,9 @@ class ExtensibleSearchPage extends \Page
             ), 'Title');
         }
 
-        // The history view shouldn't show the following, as they're not versioned.
-
-        $pageHistory = Controller::has_curr() && (Controller::curr() instanceof CMSPageHistoryController);
-
         // Determine whether analytics have been enabled.
 
-        if ($configuration->get(ExtensibleSearch::class, 'enable_analytics') && !$pageHistory) {
+        if ($configuration->get(ExtensibleSearch::class, 'enable_analytics')) {
 
             // Instantiate the analytic summary.
 
@@ -287,7 +282,7 @@ class ExtensibleSearchPage extends \Page
             // Instantiate an export button.
 
             if ($this->getHistorySummary()->exists()) {
-                $summaryConfiguration->addComponent($summaryExport = new GridFieldExportButton());
+                $summaryConfiguration->addComponent($summaryExport = GridFieldExportButton::create());
                 $summaryExport->setExportColumns($summaryDisplay);
             }
 
@@ -339,7 +334,7 @@ class ExtensibleSearchPage extends \Page
 
         // Determine whether suggestions have been enabled.
 
-        if ($configuration->get(ExtensibleSearchSuggestion::class, 'enable_suggestions') && !$pageHistory) {
+        if ($configuration->get(ExtensibleSearchSuggestion::class, 'enable_suggestions')) {
 
             // Appropriately restrict the approval functionality.
 
@@ -474,7 +469,6 @@ class ExtensibleSearchPage extends \Page
     /**
      *	Determine the search page specific analytics.
      *
-     *	@return array list
      */
 
     public function getHistorySummary()
@@ -484,7 +478,9 @@ class ExtensibleSearchPage extends \Page
         $query = new SQLSelect(
             "Term, COUNT(*) AS Frequency, ((COUNT(*) * 100.00) / {$history->count()}) AS FrequencyPercentage, AVG(Time) AS AverageTimeTaken, (Results > 0) AS Results",
             'ExtensibleSearch',
-            "ExtensibleSearchPageID = {$this->ID}",
+            [
+                'ExtensibleSearchPageID = ?' => $this->ID
+            ],
             [
                 'Frequency' => 'DESC',
                 'Term' => 'ASC'

@@ -30,7 +30,14 @@ class ExtensibleSearchExtension extends Extension
 
         // Instantiate the search form, primarily excluding the sorting selection.
 
-        return ($page = $this->getOwner()->getSearchPage()) ? ModelAsController::controller_for($page)->getSearchForm($request, $sorting) : null;
+        $page = $this->getOwner()->getSearchPage();
+        if($page instanceof ExtensibleSearchPage) {
+            /** @var ExtensibleSearchPageController $controller */
+            $controller = ModelAsController::controller_for($page);
+            return $controller->getSearchForm($request, $sorting);
+        }
+
+        return null;
     }
 
     /**
@@ -38,7 +45,7 @@ class ExtensibleSearchExtension extends Extension
      *
      */
 
-    public function getSearchPage()
+    public function getSearchPage(): ?ExtensibleSearchPage
     {
 
         $pages = ExtensibleSearchPage::get();

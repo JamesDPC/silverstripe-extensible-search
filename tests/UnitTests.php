@@ -8,8 +8,10 @@ use nglasl\extensible\ExtensibleSearchArchived;
 use nglasl\extensible\ExtensibleSearchArchiveTask;
 use nglasl\extensible\ExtensibleSearchPage;
 use nglasl\extensible\ExtensibleSearchSuggestion;
+use nglasl\extensible\ExtensibleSearchPageController;
 use SilverStripe\CMS\Controllers\ModelAsController;
 use SilverStripe\CMS\Model\SiteTree;
+use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\ORM\Search\FulltextSearchable;
@@ -58,6 +60,7 @@ class UnitTests extends SapphireTest
         $page->SearchEngine = 'Full-Text';
         $page->write();
         $controller = ModelAsController::controller_for($page);
+        $this->assertInstanceOf(ExtensibleSearchPageController::class, $controller);
 
         // This shouldn't find anything, since no searchable pages exist.
 
@@ -84,6 +87,7 @@ class UnitTests extends SapphireTest
 
         $page = ExtensibleSearchPage::get()->first();
         $controller = ModelAsController::controller_for($page);
+        $this->assertInstanceOf(ExtensibleSearchPageController::class, $controller);
 
         // This shouldn't find anything, since the query doesn't match the page.
 
@@ -116,7 +120,8 @@ class UnitTests extends SapphireTest
 
         // Trigger the task to archive past search analytics.
 
-        singleton(ExtensibleSearchArchiveTask::class)->run(null);
+        $request = new HTTPRequest('GET', '/dev/tasks/ExtensibleSearchArchiveTask');
+        singleton(ExtensibleSearchArchiveTask::class)->run($request);
         $this->assertEquals(ExtensibleSearch::get()->filter($filter)->count(), 0);
         $this->assertEquals(ExtensibleSearchSuggestion::get()->filter($filter)->count(), 1);
 
