@@ -12,7 +12,6 @@ use SilverStripe\ORM\Queries\SQLUpdate;
  * NOTE: The search analytics will be purged after this has taken place.
  * @author Nathan Glasl <nathan@symbiote.com.au>
  */
-
 class ExtensibleSearchArchiveTask extends BuildTask
 {
     private static string $segment = 'ExtensibleSearchArchiveTask';
@@ -24,7 +23,6 @@ class ExtensibleSearchArchiveTask extends BuildTask
     /**
      * The number of analytics to archive for each search page.
      */
-
     private static int $number_to_archive = 100;
 
     public function run($request)

@@ -20,7 +20,6 @@ use SilverStripe\ORM\Search\FulltextSearchable;
  *	The extensible search specific unit testing.
  *	@author Nathan Glasl <nathan@symbiote.com.au>
  */
-
 class UnitTests extends SapphireTest
 {
     protected $usesDatabase = true;

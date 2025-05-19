@@ -3,12 +3,15 @@
 namespace nglasl\extensible;
 
 use SilverStripe\CMS\Search\SearchForm;
+use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\FormAction;
 use SilverStripe\Forms\TextField;
+use SilverStripe\Forms\Form;
+use SilverStripe\ORM\Filterable;
 use SilverStripe\ORM\PaginatedList;
 use SilverStripe\ORM\Search\FulltextSearchable;
 use Symbiote\Multisites\Multisites;
@@ -16,7 +19,6 @@ use Symbiote\Multisites\Multisites;
 /**
  * @author Nathan Glasl <nathan@symbiote.com.au>
  */
-
 class ExtensibleSearchPageController extends \PageController
 {
     public $service;
@@ -34,7 +36,6 @@ class ExtensibleSearchPageController extends \PageController
     /**
      * Determine whether the search page should start with a listing.
      */
-
     public function index()
     {
 
@@ -91,12 +92,8 @@ class ExtensibleSearchPageController extends \PageController
 
     /**
      * Instantiate the search form.
-     *
-     * @parameter <{REQUEST}> http request
-     * @parameter <{DISPLAY_SORTING}> boolean
      */
-
-    public function getForm($request = null, $sorting = true): ?SearchForm
+    public function getForm(?HTTPRequest $request = null, bool|string $sorting = true): ?SearchForm
     {
 
         // Determine whether a search engine has been selected.
@@ -184,12 +181,8 @@ class ExtensibleSearchPageController extends \PageController
 
     /**
      * Instantiate the search form.
-     *
-     * @parameter <{REQUEST}> http request
-     * @parameter <{DISPLAY_SORTING}> boolean
      */
-
-    public function Form($request = null, $sorting = true)
+    public function Form(?HTTPRequest $request = null, bool|string $sorting = true)
     {
 
         // This provides consistency when it comes to defining parameters from the template.
@@ -199,12 +192,8 @@ class ExtensibleSearchPageController extends \PageController
 
     /**
      * Instantiate the search form, primarily outside the search page.
-     *
-     * @parameter <{REQUEST}> http request
-     * @parameter <{DISPLAY_SORTING}> boolean
      */
-
-    public function getSearchForm($request = null, $sorting = false)
+    public function getSearchForm(?HTTPRequest $request = null, bool|string $sorting = false)
     {
 
         // Instantiate the search form, primarily excluding the sorting selection.
@@ -232,12 +221,8 @@ class ExtensibleSearchPageController extends \PageController
 
     /**
      * Display the search form results.
-     *
-     * @parameter <{SEARCH_PARAMETERS}> array
-     * @parameter <{SEARCH_FORM}> search form
      */
-
-    public function getSearchResults($data = null, $form = null)
+    public function getSearchResults(?array $data = null, ?SearchForm $form = null)
     {
 
         // Determine whether a search engine has been selected.
@@ -276,7 +261,7 @@ class ExtensibleSearchPageController extends \PageController
             $data['SortDirection'] = $page->SortDirection;
         }
 
-        if (!isset($form)) {
+        if (is_null($form)) {
             $form = $this->getForm($request);
         }
 
@@ -339,16 +324,17 @@ class ExtensibleSearchPageController extends \PageController
             // This is because the search form pulls from the request directly.
 
             $request->offsetSet('start', 0);
-            $list = $form->getResults()->getList();
+            $list = $form->getResults();
 
             // The search engine may only support limited hierarchy filtering for multiple sites.
 
             $filter = $page->SearchTrees()->column();
-            if (count($filter) && (($hierarchy = $page->supports_hierarchy) || class_exists(Multisites::class))) {
+            if (($list instanceof Filterable) && count($filter) && (($hierarchy = $page->supports_hierarchy) || class_exists(Multisites::class))) {
 
                 // Apply the search trees filtering.
-
-                $list = $list->filter($hierarchy ? 'ParentID' : 'SiteID', $filter);
+                $key = $hierarchy ? 'ParentID' : 'SiteID';
+                // @phpstan-ignore arguments.count
+                $list = $list->filter([$key => $filter]);
             }
 
             // Apply custom filtering.

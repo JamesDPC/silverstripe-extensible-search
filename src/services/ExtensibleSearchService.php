@@ -15,13 +15,12 @@ class ExtensibleSearchService
     /**
      * Log the details of a user search for analytics.
      *
-     * @parameter <{SEARCH_TERM}> string
-     * @parameter <{NUMBER_OF_SEARCH_RESULTS}> integer
-     * @parameter <{SEARCH_TIME}> float
-     * @parameter <{SEARCH_ENGINE}> string
-     * @parameter <{EXTENSIBLE_SEARCH_PAGE_ID}> integer
+     * @param string $term
+     * @param int $results
+     * @param float $time
+     * @param string $engine
+     * @param int $pageID
      */
-
     public function logSearch($term, $results, $time, $engine, $pageID)
     {
 
@@ -56,10 +55,9 @@ class ExtensibleSearchService
     /**
      * Log a user search generated suggestion.
      *
-     * @parameter <{SEARCH_TERM}> string
-     * @parameter <{EXTENSIBLE_SEARCH_PAGE_ID}> integer
+     * @param string $term
+     * @param int $pageID
      */
-
     public function logSuggestion($term, $pageID)
     {
 
@@ -122,10 +120,9 @@ class ExtensibleSearchService
     /**
      * Toggle a search suggestion's approval.
      *
-     * @parameter <{SUGGESTION_ID}> integer
+     * @param int $ID
      * @return string
      */
-
     public function toggleSuggestionApproved($ID): ?string
     {
 
@@ -149,12 +146,11 @@ class ExtensibleSearchService
     /**
      * Retrieve the search suggestions for a page.
      *
-     * @parameter <{EXTENSIBLE_SEARCH_PAGE_ID}> integer
-     * @parameter <{LIMIT}> integer
-     * @parameter <{APPROVED_ONLY}> boolean
+     * @param int $pageID
+     * @param int $limit
+     * @param bool $approved
      * @return array
      */
-
     public function getPageSuggestions($pageID, $limit = 0, $approved = true)
     {
 
@@ -184,13 +180,12 @@ class ExtensibleSearchService
     /**
      * Retrieve the most relevant search suggestions.
      *
-     * @parameter <{SEARCH_TERM}> string
-     * @parameter <{EXTENSIBLE_SEARCH_PAGE_ID}> integer
-     * @parameter <{LIMIT}> integer
-     * @parameter <{APPROVED_ONLY}> boolean
+     * @parame string $term
+     * @param int $pageID
+     * @param int $limit
+     * @param bool $approved
      * @return array
      */
-
     public function getSuggestions($term, $pageID, ?int $limit = 5, $approved = true)
     {
 

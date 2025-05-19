@@ -14,7 +14,6 @@ use SilverStripe\ORM\FieldType\DBHTMLText;
  * This represents an archived collection of search analytics.
  * @author Nathan Glasl <nathan@symbiote.com.au>
  */
-
 class ExtensibleSearchArchive extends DataObject
 {
     private static string $table_name = 'ExtensibleSearchArchive';
@@ -55,7 +54,6 @@ class ExtensibleSearchArchive extends DataObject
      *
      * @return string
      */
-
     public function getTitle()
     {
 
@@ -113,7 +111,6 @@ class ExtensibleSearchArchive extends DataObject
     /**
      * The archive date range as HTML.
      */
-
     public function getTitleSummary()
     {
 

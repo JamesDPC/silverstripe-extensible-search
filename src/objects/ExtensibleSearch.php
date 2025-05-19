@@ -9,7 +9,6 @@ use SilverStripe\ORM\DataObject;
  * Details of a user search that are retrieved for analytics.
  * @author Nathan Glasl <nathan@symbiote.com.au>
  */
-
 class ExtensibleSearch extends DataObject
 {
     private static string $table_name = 'ExtensibleSearch';
@@ -38,7 +37,6 @@ class ExtensibleSearch extends DataObject
     /**
      * Allow the ability to disable search analytics.
      */
-
     private static bool $enable_analytics = true;
 
     public function canView($member = null)
@@ -73,7 +71,6 @@ class ExtensibleSearch extends DataObject
      *
      * @return string
      */
-
     public function getSearchEngineSummary()
     {
 

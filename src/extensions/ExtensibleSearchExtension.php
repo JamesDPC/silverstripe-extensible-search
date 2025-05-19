@@ -3,6 +3,7 @@
 namespace nglasl\extensible;
 
 use SilverStripe\CMS\Controllers\ModelAsController;
+use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Core\ClassInfo;
 use SilverStripe\Core\Extension;
 use Symbiote\Multisites\Multisites;
@@ -20,12 +21,8 @@ class ExtensibleSearchExtension extends Extension
 
     /**
      * Instantiate the search form, primarily outside the search page.
-     *
-     * @parameter <{REQUEST}> http request
-     * @parameter <{DISPLAY_SORTING}> boolean
      */
-
-    public function getSearchForm($request = null, $sorting = false)
+    public function getSearchForm(?HTTPRequest $request = null, bool|string $sorting = false)
     {
 
         // Instantiate the search form, primarily excluding the sorting selection.
@@ -44,7 +41,6 @@ class ExtensibleSearchExtension extends Extension
      * Retrieve the search page.
      *
      */
-
     public function getSearchPage(): ?ExtensibleSearchPage
     {
 

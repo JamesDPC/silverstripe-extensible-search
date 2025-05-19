@@ -36,7 +36,6 @@ use Symbiote\Multisites\Multisites;
  * The page used to display search results, analytics and suggestions, allowing user customisation and developer extension.
  * @author Nathan Glasl <nathan@symbiote.com.au>
  */
-
 class ExtensibleSearchPage extends \Page
 {
     private static string $table_name = 'ExtensibleSearchPage';
@@ -70,19 +69,16 @@ class ExtensibleSearchPage extends \Page
     /**
      * The search engines that are available.
      */
-
     private static array $custom_search_engines = [];
 
     /**
      * The full-text search engine does not support hierarchy filtering.
      */
-
     public $supports_hierarchy = false;
 
     /**
      * Instantiate a search page, should one not exist.
      */
-
     public function requireDefaultRecords()
     {
 
@@ -138,7 +134,6 @@ class ExtensibleSearchPage extends \Page
     /**
      * Display the search engine specific configuration, and the search page specific analytics and suggestions.
      */
-
     public function getCMSFields()
     {
 
@@ -403,8 +398,7 @@ class ExtensibleSearchPage extends \Page
      *
      * @return array(string, string)
      */
-
-    public function getSelectableFields()
+    public function getSelectableFields(): array
     {
 
         // Instantiate some default selectable fields, just in case the search engine does not provide any.
@@ -470,8 +464,7 @@ class ExtensibleSearchPage extends \Page
      * Determine the search page specific analytics.
      *
      */
-
-    public function getHistorySummary()
+    public function getHistorySummary(): ArrayList
     {
 
         $history = $this->History();

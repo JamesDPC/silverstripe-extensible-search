@@ -8,7 +8,6 @@ use SilverStripe\ORM\DataObject;
  * This represents an archived search analytic.
  * @author Nathan Glasl <nathan@symbiote.com.au>
  */
-
 class ExtensibleSearchArchived extends DataObject
 {
     private static string $table_name = 'ExtensibleSearchArchived';
