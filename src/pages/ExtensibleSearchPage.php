@@ -221,7 +221,7 @@ class ExtensibleSearchPage extends \Page
 
                     // Update the search trees to reflect this.
 
-                    $tree->setDisableFunction(fn($page): bool => $page->ParentID != 0);
+                    $tree->setDisableFunction(fn ($page): bool => $page->ParentID != 0);
                     $tree->setDescription('This <strong>search engine</strong> only supports limited hierarchy');
                 }
             }

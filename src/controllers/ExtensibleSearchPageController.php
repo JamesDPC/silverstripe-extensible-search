@@ -208,7 +208,7 @@ class ExtensibleSearchPageController extends \PageController
 
             // Replace the search title with a placeholder.
 
-            if($search = $form->Fields()->dataFieldByName('Search')) {
+            if ($search = $form->Fields()->dataFieldByName('Search')) {
                 $search->setAttribute('placeholder', $search->Title());
                 $search->setTitle('');
             }
