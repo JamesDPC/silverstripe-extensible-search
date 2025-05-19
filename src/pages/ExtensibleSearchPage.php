@@ -2,7 +2,6 @@
 
 namespace nglasl\extensible;
 
-use SilverStripe\CMS\Controllers\CMSPageHistoryController;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Control\Controller;
 use SilverStripe\Core\ClassInfo;
@@ -34,10 +33,18 @@ use Symbiote\Multisites\Model\Site;
 use Symbiote\Multisites\Multisites;
 
 /**
- *	The page used to display search results, analytics and suggestions, allowing user customisation and developer extension.
- *	@author Nathan Glasl <nathan@symbiote.com.au>
+ * The page used to display search results, analytics and suggestions, allowing user customisation and developer extension.
+ * @author Nathan Glasl <nathan@symbiote.com.au>
+ * @property ?string $SearchEngine
+ * @property ?string $SortBy
+ * @property ?string $SortDirection
+ * @property bool $StartWithListing
+ * @property int $ResultsPerPage
+ * @method \SilverStripe\ORM\HasManyList<\nglasl\extensible\ExtensibleSearch> History()
+ * @method \SilverStripe\ORM\HasManyList<\nglasl\extensible\ExtensibleSearchArchive> Archives()
+ * @method \SilverStripe\ORM\HasManyList<\nglasl\extensible\ExtensibleSearchSuggestion> Suggestions()
+ * @method \SilverStripe\ORM\ManyManyList<\SilverStripe\CMS\Model\SiteTree> SearchTrees()
  */
-
 class ExtensibleSearchPage extends \Page
 {
     private static string $table_name = 'ExtensibleSearchPage';
@@ -69,21 +76,19 @@ class ExtensibleSearchPage extends \Page
     private static string $icon = 'nglasl/silverstripe-extensible-search: client/images/search.png';
 
     /**
-     *	The search engines that are available.
+     * The search engines that are available.
      */
-
     private static array $custom_search_engines = [];
 
     /**
-     *	The full-text search engine does not support hierarchy filtering.
+     * The full-text search engine does not support hierarchy filtering.
      */
-
     public $supports_hierarchy = false;
 
     /**
-     *	Instantiate a search page, should one not exist.
+     * Instantiate a search page, should one not exist.
      */
-
+    #[\Override]
     public function requireDefaultRecords()
     {
 
@@ -93,13 +98,13 @@ class ExtensibleSearchPage extends \Page
 
         // Determine whether pages should be created.
 
-        if (!self::config()->create_default_pages) {
+        if (!self::config()->get('create_default_pages')) {
             return;
         }
 
         // This is required to support multiple sites.
 
-        if (ClassInfo::exists(Multisites::class)) {
+        if (class_exists(Site::class)) {
             foreach (Site::get() as $site) {
 
                 // The problem is that class name mapping happens after this, but we need it right now to query pages.
@@ -137,9 +142,9 @@ class ExtensibleSearchPage extends \Page
     }
 
     /**
-     *	Display the search engine specific configuration, and the search page specific analytics and suggestions.
+     * Display the search engine specific configuration, and the search page specific analytics and suggestions.
      */
-
+    #[\Override]
     public function getCMSFields()
     {
 
@@ -149,7 +154,7 @@ class ExtensibleSearchPage extends \Page
         // Determine the search engines that are available.
 
         $engines = [];
-        foreach (self::config()->custom_search_engines as $engine => $display) {
+        foreach (self::config()->get('custom_search_engines') as $engine => $display) {
 
             // The search engines may define an optional display title.
 
@@ -200,7 +205,7 @@ class ExtensibleSearchPage extends \Page
 
             // The search engine may only support limited hierarchy filtering for multiple sites.
 
-            if ($hierarchy || ClassInfo::exists(Multisites::class)) {
+            if ($hierarchy || class_exists(Multisites::class)) {
 
                 // Display the search trees selection.
 
@@ -216,7 +221,7 @@ class ExtensibleSearchPage extends \Page
 
                     // Update the search trees to reflect this.
 
-                    $tree->setDisableFunction(fn($page): bool => $page->ParentID != 0);
+                    $tree->setDisableFunction(fn ($page): bool => $page->ParentID != 0);
                     $tree->setDescription('This <strong>search engine</strong> only supports limited hierarchy');
                 }
             }
@@ -260,13 +265,9 @@ class ExtensibleSearchPage extends \Page
             ), 'Title');
         }
 
-        // The history view shouldn't show the following, as they're not versioned.
-
-        $pageHistory = Controller::has_curr() && (Controller::curr() instanceof CMSPageHistoryController);
-
         // Determine whether analytics have been enabled.
 
-        if ($configuration->get(ExtensibleSearch::class, 'enable_analytics') && !$pageHistory) {
+        if ($configuration->get(ExtensibleSearch::class, 'enable_analytics')) {
 
             // Instantiate the analytic summary.
 
@@ -287,7 +288,7 @@ class ExtensibleSearchPage extends \Page
             // Instantiate an export button.
 
             if ($this->getHistorySummary()->exists()) {
-                $summaryConfiguration->addComponent($summaryExport = new GridFieldExportButton());
+                $summaryConfiguration->addComponent($summaryExport = GridFieldExportButton::create());
                 $summaryExport->setExportColumns($summaryDisplay);
             }
 
@@ -339,7 +340,7 @@ class ExtensibleSearchPage extends \Page
 
         // Determine whether suggestions have been enabled.
 
-        if ($configuration->get(ExtensibleSearchSuggestion::class, 'enable_suggestions') && !$pageHistory) {
+        if ($configuration->get(ExtensibleSearchSuggestion::class, 'enable_suggestions')) {
 
             // Appropriately restrict the approval functionality.
 
@@ -375,6 +376,7 @@ class ExtensibleSearchPage extends \Page
         return $fields;
     }
 
+    #[\Override]
     public function onBeforeWrite()
     {
 
@@ -404,12 +406,11 @@ class ExtensibleSearchPage extends \Page
     }
 
     /**
-     *	Determine the search engine specific selectable fields, primarily for sorting.
+     * Determine the search engine specific selectable fields, primarily for sorting.
      *
-     *	@return array(string, string)
+     * @return array(string, string)
      */
-
-    public function getSelectableFields()
+    public function getSelectableFields(): array
     {
 
         // Instantiate some default selectable fields, just in case the search engine does not provide any.
@@ -472,19 +473,19 @@ class ExtensibleSearchPage extends \Page
     }
 
     /**
-     *	Determine the search page specific analytics.
+     * Determine the search page specific analytics.
      *
-     *	@return array list
      */
-
-    public function getHistorySummary()
+    public function getHistorySummary(): ArrayList
     {
 
         $history = $this->History();
         $query = new SQLSelect(
             "Term, COUNT(*) AS Frequency, ((COUNT(*) * 100.00) / {$history->count()}) AS FrequencyPercentage, AVG(Time) AS AverageTimeTaken, (Results > 0) AS Results",
             'ExtensibleSearch',
-            "ExtensibleSearchPageID = {$this->ID}",
+            [
+                'ExtensibleSearchPageID = ?' => $this->ID
+            ],
             [
                 'Frequency' => 'DESC',
                 'Term' => 'ASC'

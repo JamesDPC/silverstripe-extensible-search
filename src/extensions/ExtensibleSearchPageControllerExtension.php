@@ -10,6 +10,7 @@ use SilverStripe\Forms\FormField;
  * Update search form based on configuration
  * Extension can be applied to nglasl\extensible\ExtensibleSearchPageController
  * @author James
+ * @extends \SilverStripe\Core\Extension<static>
  */
 class ExtensibleSearchPageControllerExtension extends Extension
 {
@@ -46,7 +47,7 @@ class ExtensibleSearchPageControllerExtension extends Extension
     public function applySortByFields(Form $form)
     {
         $sortField = $form->Fields()->dataFieldByName('SortBy');
-        if ($sortField) {
+        if ($sortField && $sortField instanceof \SilverStripe\Forms\SelectField) {
             $fields = $this->getDisplayedSortFields();
             if (count($fields) == 0) {
                 // remove fields as there is no displayed sort

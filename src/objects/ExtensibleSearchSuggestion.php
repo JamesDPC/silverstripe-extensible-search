@@ -12,18 +12,21 @@ use SilverStripe\Security\Security;
 use SilverStripe\View\Requirements;
 
 /**
- *	Details of a user search generated suggestion.
- *	@author Nathan Glasl <nathan@symbiote.com.au>
+ * Details of a user search generated suggestion.
+ * @author Nathan Glasl <nathan@symbiote.com.au>
+ * @property ?string $Term
+ * @property int $Frequency
+ * @property bool $Approved
+ * @property int $ExtensibleSearchPageID
+ * @method \nglasl\extensible\ExtensibleSearchPage ExtensibleSearchPage()
  */
-
 class ExtensibleSearchSuggestion extends DataObject implements PermissionProvider
 {
     private static string $table_name = 'ExtensibleSearchSuggestion';
 
     /**
-     *	Store the frequency to make search suggestion relevance more efficient.
+     * Store the frequency to make search suggestion relevance more efficient.
      */
-
     private static array $db = [
         'Term' => 'Varchar(255)',
         'Frequency' => 'Int',
@@ -49,21 +52,19 @@ class ExtensibleSearchSuggestion extends DataObject implements PermissionProvide
     ];
 
     /**
-     *	Allow the ability to disable search suggestions.
+     * Allow the ability to disable search suggestions.
      */
-
     private static bool $enable_suggestions = true;
 
     /**
-     *	Allow the ability to automatically approve user search generated suggestions.
+     * Allow the ability to automatically approve user search generated suggestions.
      */
-
     private static bool $automatic_approval = false;
 
     /**
-     *	Create a unique permission for management of search suggestions.
+     * Create a unique permission for management of search suggestions.
      */
-
+    #[\Override]
     public function providePermissions()
     {
 
@@ -76,24 +77,28 @@ class ExtensibleSearchSuggestion extends DataObject implements PermissionProvide
         ];
     }
 
+    #[\Override]
     public function canView($member = null)
     {
 
         return true;
     }
 
+    #[\Override]
     public function canEdit($member = null)
     {
 
         return $this->canCreate($member);
     }
 
+    #[\Override]
     public function canCreate($member = null, $context = [])
     {
 
         return Permission::checkMember($member, 'EXTENSIBLE_SEARCH_SUGGESTIONS');
     }
 
+    #[\Override]
     public function canDelete($member = null)
     {
 
@@ -101,17 +106,18 @@ class ExtensibleSearchSuggestion extends DataObject implements PermissionProvide
     }
 
     /**
-     *	Retrieve the search suggestion title.
+     * Retrieve the search suggestion title.
      *
-     *	@return string
+     * @return string
      */
-
+    #[\Override]
     public function getTitle()
     {
 
         return $this->Term;
     }
 
+    #[\Override]
     public function getCMSFields()
     {
 
@@ -134,9 +140,9 @@ class ExtensibleSearchSuggestion extends DataObject implements PermissionProvide
     }
 
     /**
-     *	Confirm that the current search suggestion is valid.
+     * Confirm that the current search suggestion is valid.
      */
-
+    #[\Override]
     public function validate()
     {
 
@@ -160,6 +166,7 @@ class ExtensibleSearchSuggestion extends DataObject implements PermissionProvide
         return $result;
     }
 
+    #[\Override]
     public function fieldLabels($includerelations = true)
     {
 
@@ -172,11 +179,10 @@ class ExtensibleSearchSuggestion extends DataObject implements PermissionProvide
     }
 
     /**
-     *	Retrieve the frequency for display purposes.
+     * Retrieve the frequency for display purposes.
      *
-     *	@return string
+     * @return string
      */
-
     public function getFrequencySummary()
     {
 
@@ -184,7 +190,7 @@ class ExtensibleSearchSuggestion extends DataObject implements PermissionProvide
     }
 
     /**
-     *	Retrieve the frequency percentage.
+     * Retrieve the frequency percentage.
      */
     public function getFrequencyPercentage(): string
     {
@@ -194,11 +200,10 @@ class ExtensibleSearchSuggestion extends DataObject implements PermissionProvide
     }
 
     /**
-     *	Retrieve the approved field for update purposes.
+     * Retrieve the approved field for update purposes.
      *
-     *	@return string
+     * @return string
      */
-
     public function getApprovedField()
     {
 

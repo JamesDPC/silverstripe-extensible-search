@@ -3,16 +3,16 @@
 namespace nglasl\extensible;
 
 use SilverStripe\Control\Controller;
+use SilverStripe\Control\HTTPRequest;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Permission;
 use SilverStripe\Security\Security;
 
 /**
- *	Passes the current request over to the `ExtensibleSearchService`.
- *	@author Nathan Glasl <nathan@symbiote.com.au>
+ * Passes the current request over to the `ExtensibleSearchService`.
+ * @author Nathan Glasl <nathan@symbiote.com.au>
  */
-
 class ExtensibleSearchAPI extends Controller
 {
     public $service;
@@ -28,9 +28,8 @@ class ExtensibleSearchAPI extends Controller
     ];
 
     /**
-     *	Reject a direct request.
+     * Reject a direct request.
      */
-
     public function index()
     {
 
@@ -38,10 +37,9 @@ class ExtensibleSearchAPI extends Controller
     }
 
     /**
-     *	Toggle a search suggestion's approval.
+     * Toggle a search suggestion's approval.
      */
-
-    public function toggleSuggestionApproved($request)
+    public function toggleSuggestionApproved(HTTPRequest $request)
     {
 
         // Restrict this functionality appropriately.
@@ -61,13 +59,9 @@ class ExtensibleSearchAPI extends Controller
     }
 
     /**
-     *	Retrieve the search suggestions that have been approved (great for client side filtering).
-     *
-     *	@URLparameter page <{EXTENSIBLE_SEARCH_PAGE_ID}> integer
-     *	@return JSON
+     * Retrieve the search suggestions that have been approved (great for client side filtering).
      */
-
-    public function getPageSuggestions($request)
+    public function getPageSuggestions(HTTPRequest $request)
     {
 
         if (Config::inst()->get(ExtensibleSearchSuggestion::class, 'enable_suggestions')) {
@@ -86,14 +80,9 @@ class ExtensibleSearchAPI extends Controller
     }
 
     /**
-     *	Retrieve the most relevant search suggestions that have been approved.
-     *
-     *	@URLparameter term <{SEARCH_TERM}> string
-     *	@URLparameter page <{EXTENSIBLE_SEARCH_PAGE_ID}> integer
-     *	@return JSON
+     * Retrieve the most relevant search suggestions that have been approved.
      */
-
-    public function getSuggestions($request)
+    public function getSuggestions(HTTPRequest $request)
     {
 
         if (Config::inst()->get(ExtensibleSearchSuggestion::class, 'enable_suggestions')) {

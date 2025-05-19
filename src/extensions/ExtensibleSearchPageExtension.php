@@ -10,6 +10,9 @@ use Symbiote\MultiValueField\Fields\MultiValueDropdownField;
  * Update search form based on configuration
  * Extension can be applied to nglasl\extensible\ExtensibleSearchPageController
  * @author James
+ * @property mixed $DisplayedSortFields
+ * @property bool $UseAdvancedSearch
+ * @extends \SilverStripe\ORM\DataExtension<static>
  */
 class ExtensibleSearchPageExtension extends DataExtension
 {

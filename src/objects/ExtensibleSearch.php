@@ -6,10 +6,15 @@ use SilverStripe\Core\Config\Config;
 use SilverStripe\ORM\DataObject;
 
 /**
- *	Details of a user search that are retrieved for analytics.
- *	@author Nathan Glasl <nathan@symbiote.com.au>
+ * Details of a user search that are retrieved for analytics.
+ * @author Nathan Glasl <nathan@symbiote.com.au>
+ * @property ?string $Term
+ * @property int $Results
+ * @property float $Time
+ * @property ?string $SearchEngine
+ * @property int $ExtensibleSearchPageID
+ * @method \nglasl\extensible\ExtensibleSearchPage ExtensibleSearchPage()
  */
-
 class ExtensibleSearch extends DataObject
 {
     private static string $table_name = 'ExtensibleSearch';
@@ -36,17 +41,18 @@ class ExtensibleSearch extends DataObject
     ];
 
     /**
-     *	Allow the ability to disable search analytics.
+     * Allow the ability to disable search analytics.
      */
-
     private static bool $enable_analytics = true;
 
+    #[\Override]
     public function canView($member = null)
     {
 
         return true;
     }
 
+    #[\Override]
     public function fieldLabels($includerelations = true)
     {
 
@@ -60,7 +66,7 @@ class ExtensibleSearch extends DataObject
     }
 
     /**
-     *	Retrieve the search time for display purposes.
+     * Retrieve the search time for display purposes.
      */
     public function getTimeTakenSummary(): float
     {
@@ -69,11 +75,10 @@ class ExtensibleSearch extends DataObject
     }
 
     /**
-     *	Retrieve the search engine for display purposes.
+     * Retrieve the search engine for display purposes.
      *
-     *	@return string
+     * @return string
      */
-
     public function getSearchEngineSummary()
     {
 

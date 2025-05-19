@@ -8,11 +8,10 @@ use SilverStripe\ORM\Queries\SQLDelete;
 use SilverStripe\ORM\Queries\SQLUpdate;
 
 /**
- *	This creates an archived collection of analytics for each search page.
- *	NOTE: The search analytics will be purged after this has taken place.
- *	@author Nathan Glasl <nathan@symbiote.com.au>
+ * This creates an archived collection of analytics for each search page.
+ * NOTE: The search analytics will be purged after this has taken place.
+ * @author Nathan Glasl <nathan@symbiote.com.au>
  */
-
 class ExtensibleSearchArchiveTask extends BuildTask
 {
     private static string $segment = 'ExtensibleSearchArchiveTask';
@@ -22,11 +21,11 @@ class ExtensibleSearchArchiveTask extends BuildTask
     protected $description = 'This creates an archived collection of analytics for each search page.';
 
     /**
-     *	The number of analytics to archive for each search page.
+     * The number of analytics to archive for each search page.
      */
-
     private static int $number_to_archive = 100;
 
+    #[\Override]
     public function run($request)
     {
 
@@ -56,7 +55,7 @@ class ExtensibleSearchArchiveTask extends BuildTask
 
                     // Determine whether the number of analytics to archive has been reached.
 
-                    if ($counter++ === self::config()->number_to_archive) {
+                    if ($counter++ === self::config()->get('number_to_archive')) {
                         break;
                     }
 
@@ -74,7 +73,9 @@ class ExtensibleSearchArchiveTask extends BuildTask
                 DB::alteration_message("{$history->count()} Archived");
                 $query = new SQLDelete(
                     'ExtensibleSearch',
-                    "ExtensibleSearchPageID = {$page->ID}"
+                    [
+                        'ExtensibleSearchPageID = ?' => $page->ID
+                    ]
                 );
                 $query->execute();
 
@@ -85,7 +86,9 @@ class ExtensibleSearchArchiveTask extends BuildTask
                     [
                         'Frequency' => 0
                     ],
-                    "ExtensibleSearchPageID = {$page->ID}"
+                    [
+                        'ExtensibleSearchPageID = ?' => $page->ID
+                    ]
                 );
                 $query->execute();
             }

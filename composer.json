@@ -14,7 +14,8 @@
         "email": "nathan@symbiote.com.au"
     }],
     "require": {
-        "silverstripe/cms": "^5"
+        "silverstripe/cms": "^5",
+        "symbiote/silverstripe-multivaluefield": "^6"
     },
     "require-dev": {
         "cambis/silverstripe-rector": "^1",
