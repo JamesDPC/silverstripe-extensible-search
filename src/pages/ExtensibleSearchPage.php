@@ -479,25 +479,52 @@ class ExtensibleSearchPage extends \Page
     public function getHistorySummary(): ArrayList
     {
 
-        $history = $this->History();
+        
+        if(!$this->isInDB()) {
+            return ArrayList::create();
+        }
+
+        // Count of linked records
+        $countQuery = new SQLSelect(
+            "COUNT(ID) AS RecordCount",
+            "ExtensibleSearch",
+            [
+                "ExtensibleSearchPageID = ?" => $this->ID
+            ]
+        );
+        $historyCount = 0;
+        if($countResult = $countQuery->execute()) {
+            $countRecord = $countResult->record();
+            $historyCount = (int)$countRecord["RecordCount"] ?? 0;
+        }
+
+        // Frequency percentage field expression
+        $frequencyPercentage = "";
+        if($historyCount == 0 ) {
+            $frequencyPercentage = "NULL";
+        } else {
+            $frequencyPercentage = "((COUNT(\"ID\") * 100.00) / {$historyCount})";
+        }
         $query = new SQLSelect(
-            "Term, COUNT(*) AS Frequency, ((COUNT(*) * 100.00) / {$history->count()}) AS FrequencyPercentage, AVG(Time) AS AverageTimeTaken, (Results > 0) AS Results",
-            'ExtensibleSearch',
+            "\"Term\", COUNT(\"ID\") AS \"Frequency\","
+            . " {$frequencyPercentage} AS \"FrequencyPercentage\","
+            . " AVG(\"Time\") AS \"AverageTimeTaken\","
+            . " IF(\"Results\" > 0, 1, 0) AS \"HasResults\"",
+            "\"ExtensibleSearch\"",
             [
-                'ExtensibleSearchPageID = ?' => $this->ID
+                "\"ExtensibleSearchPageID\" = ?" => $this->ID
             ],
             [
-                'Frequency' => 'DESC',
-                'Term' => 'ASC'
+                "\"Frequency\"" => "DESC",
+                "\"Term\"" => "ASC"
             ],
             [
-                'Term',
-                'Results'
+                "\"Term\"",
+                "\"Results\""
             ]
         );
 
         // These will require display formatting.
-
         $analytics = ArrayList::create();
         foreach ($query->execute() as $result) {
             $result = ArrayData::create(
@@ -505,7 +532,7 @@ class ExtensibleSearchPage extends \Page
             );
             $result->FrequencyPercentage = sprintf('%.2f %%', $result->FrequencyPercentage);
             $result->AverageTimeTaken = sprintf('%.5f', $result->AverageTimeTaken);
-            $result->Results = $result->Results ? _t('EXTENSIBLE_SEARCH.TRUE', 'true') : _t('EXTENSIBLE_SEARCH.FALSE', 'false');
+            $result->Results = $result->HasResults == 1 ? _t('EXTENSIBLE_SEARCH.TRUE', 'true') : _t('EXTENSIBLE_SEARCH.FALSE', 'false');
             $analytics->push($result);
         }
 

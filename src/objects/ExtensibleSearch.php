@@ -26,6 +26,12 @@ class ExtensibleSearch extends DataObject
         'SearchEngine' => 'Varchar(255)'
     ];
 
+    private static array $indexes = [
+        'Term' => true,
+        'Results' => true,
+        'Time' => true
+    ];
+
     private static array $has_one = [
         'ExtensibleSearchPage' => ExtensibleSearchPage::class
     ];
