@@ -407,8 +407,6 @@ class ExtensibleSearchPage extends \Page
 
     /**
      * Determine the search engine specific selectable fields, primarily for sorting.
-     *
-     * @return array(string, string)
      */
     public function getSelectableFields(): array
     {
