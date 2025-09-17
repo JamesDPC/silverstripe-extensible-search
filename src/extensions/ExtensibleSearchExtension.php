@@ -29,9 +29,10 @@ class ExtensibleSearchExtension extends Extension
 
         $page = $this->getOwner()->getSearchPage();
         if ($page instanceof ExtensibleSearchPage) {
-            /** @var ExtensibleSearchPageController $controller */
             $controller = ModelAsController::controller_for($page);
-            return $controller->getSearchForm($request, $sorting);
+            if($controller instanceof ExtensibleSearchPageController) {
+                return $controller->getSearchForm($request, $sorting);
+            }
         }
 
         return null;
